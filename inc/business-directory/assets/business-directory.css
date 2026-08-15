@@ -1,0 +1,152 @@
+/* Business/Supplier directory: cards, single page, and filter layout */
+
+.business-directory-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 1.5em;
+	margin: 1.5em 0;
+}
+
+.business-card {
+	border: 1px solid #e2e2e2;
+	border-radius: 6px;
+	padding: 1.2em;
+	transition: box-shadow 0.15s ease;
+}
+
+.business-card:hover {
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.business-card__link {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+}
+
+.business-card__logo img {
+	max-height: 60px;
+	width: auto;
+	margin-bottom: 0.75em;
+}
+
+.business-card__title {
+	margin: 0 0 0.4em;
+	font-size: 1.1em;
+}
+
+.business-card__badges,
+.business-single__badges {
+	margin: 0 0 0.6em;
+}
+
+.business-card__badge {
+	display: inline-block;
+	font-size: 0.75em;
+	font-weight: 600;
+	text-transform: uppercase;
+	background: #eef6fc;
+	color: #044f8d;
+	border-radius: 3px;
+	padding: 0.2em 0.6em;
+	margin: 0 0.3em 0.3em 0;
+}
+
+.business-card__excerpt {
+	font-size: 0.9em;
+	color: #555;
+	margin: 0;
+}
+
+/* Directory page filters */
+
+.business-directory__filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2em;
+	margin: 1.5em 0;
+	padding: 1em 0;
+	border-top: 1px solid #e2e2e2;
+	border-bottom: 1px solid #e2e2e2;
+}
+
+.business-directory__facet h3 {
+	margin: 0 0 0.5em;
+	font-size: 1em;
+}
+
+/* Single supplier page */
+
+.business-single__cover {
+	height: 260px;
+	background-size: cover;
+	background-position: center;
+	border-radius: 6px;
+	margin-bottom: -50px;
+}
+
+.business-single__header {
+	padding: 0 1em;
+}
+
+.business-single__logo {
+	max-height: 90px;
+	width: auto;
+	background: #fff;
+	border-radius: 6px;
+	padding: 0.5em;
+	box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
+}
+
+.business-single__body {
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	gap: 2.5em;
+	margin-top: 1.5em;
+}
+
+@media (max-width: 782px) {
+	.business-single__body {
+		grid-template-columns: 1fr;
+	}
+}
+
+.business-single__gallery-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+	gap: 0.75em;
+}
+
+.business-single__gallery-grid img {
+	width: 100%;
+	height: auto;
+	border-radius: 4px;
+}
+
+.business-single__video {
+	margin: 2em 0;
+}
+
+.business-single__video iframe {
+	max-width: 100%;
+}
+
+.business-single__sidebar {
+	background: #f9f9f9;
+	border-radius: 6px;
+	padding: 1.2em 1.5em;
+}
+
+.business-single__contact {
+	list-style: none;
+	margin: 0 0 1.2em;
+	padding: 0;
+}
+
+.business-single__contact li {
+	margin-bottom: 0.5em;
+}
+
+.business-single__terms {
+	margin: 0 0 1em;
+}
