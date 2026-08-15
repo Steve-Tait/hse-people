@@ -212,3 +212,13 @@ require_once ASTRA_THEME_DIR . 'inc/abilities/bootstrap.php';
 require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-filters.php';
 require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-hooks.php';
 require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-functions.php';
+
+/**
+ * Business directory (supplier directory) feature.
+ * business_genre taxonomy and the base "business" CPT remain managed via
+ * CPT UI, matching the site's existing convention; these files register
+ * the new pieces added on top of that in version-controlled code instead.
+ */
+require_once ASTRA_THEME_DIR . 'inc/business-directory/taxonomies.php';
+require_once ASTRA_THEME_DIR . 'inc/business-directory/acf-fields.php';
+require_once ASTRA_THEME_DIR . 'inc/business-directory/facetwp-facets.php';
