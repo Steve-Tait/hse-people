@@ -174,7 +174,7 @@ class HSE_Magazine_Archive_Widget extends \Elementor\Widget_Base {
 
 		$query = new \WP_Query( $args );
 
-		echo '<div class="magazine-grid-wrapper" data-widget-id="' . esc_attr( $this->get_id() ) . '">';
+		echo '<div class="magazine-grid-wrapper" data-widget-id="' . esc_attr( $this->get_id() ) . '" data-category="' . esc_attr( $cat_slug ) . '" data-per-page="' . esc_attr( $per_page ) . '">';
 
 		if ( 'yes' === $settings['show_search'] ) {
 			?>
@@ -187,26 +187,13 @@ class HSE_Magazine_Archive_Widget extends \Elementor\Widget_Base {
 			<?php
 		}
 
+		echo '<div class="magazine-results">';
+
 		if ( $query->have_posts() ) :
 			echo '<div class="magazine-grid">';
 			while ( $query->have_posts() ) :
 				$query->the_post();
-				$thumbnail_url = get_the_post_thumbnail_url( get_the_ID(), 'medium_large' );
-				if ( ! $thumbnail_url ) {
-					$thumbnail_url = get_template_directory_uri() . '/inc/magazine-archive/assets/magazine-placeholder.png';
-				}
-				?>
-				<div class="magazine-card" data-title="<?php echo esc_attr( strtolower( get_the_title() ) ); ?>">
-					<div class="magazine-card-image-wrap">
-						<img class="magazine-card-image" src="<?php echo esc_url( $thumbnail_url ); ?>" alt="<?php the_title_attribute(); ?>" loading="lazy">
-					</div>
-					<div class="magazine-card-content">
-						<h3 class="magazine-card-title"><?php the_title(); ?></h3>
-						<p class="magazine-card-date"><?php echo esc_html( get_the_date() ); ?></p>
-						<a href="<?php the_permalink(); ?>" class="magazine-card-btn"><?php esc_html_e( 'Read Edition', 'astra' ); ?></a>
-					</div>
-				</div>
-				<?php
+				hse_magazine_render_card();
 			endwhile;
 			echo '</div>';
 			echo '<p class="magazine-no-results" style="display:none; text-align:center; padding: 40px; color:#7A7A7A;">' . esc_html__( 'No matching editions found.', 'astra' ) . '</p>';
@@ -229,7 +216,8 @@ class HSE_Magazine_Archive_Widget extends \Elementor\Widget_Base {
 			echo '<p class="magazine-no-posts">' . esc_html__( 'No magazine editions found in this category.', 'astra' ) . '</p>';
 		endif;
 
-		echo '</div>';
+		echo '</div>'; // .magazine-results
+		echo '</div>'; // .magazine-grid-wrapper
 	}
 
 	protected function content_template() {

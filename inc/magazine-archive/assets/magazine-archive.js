@@ -2,53 +2,99 @@ class MagazineArchiveHandler extends elementorModules.frontend.handlers.Base {
     getDefaultSettings() {
         return {
             selectors: {
+                wrapper: '.magazine-grid-wrapper',
                 searchInput: '.magazine-search-input',
-                cards: '.magazine-card',
-                noResults: '.magazine-no-results',
-                grid: '.magazine-grid'
-            }
+                results: '.magazine-results'
+            },
+            debounceMs: 350
         };
     }
 
     getDefaultElements() {
         const selectors = this.getSettings('selectors');
         return {
+            $wrapper: this.$element.find(selectors.wrapper),
             $searchInput: this.$element.find(selectors.searchInput),
-            $cards: this.$element.find(selectors.cards),
-            $noResults: this.$element.find(selectors.noResults),
-            $grid: this.$element.find(selectors.grid)
+            $results: this.$element.find(selectors.results)
         };
     }
 
     bindEvents() {
         if (this.elements.$searchInput.length) {
-            this.elements.$searchInput.on('input', this.handleSearch.bind(this));
+            this.elements.$searchInput.on('input', this.handleInput.bind(this));
         }
     }
 
-    handleSearch(event) {
-        const query = event.target.value.toLowerCase().trim();
-        let visibleCount = 0;
+    onInit(...args) {
+        super.onInit(...args);
+        // Cache the server-rendered results (grid + pagination) so we can
+        // restore them exactly when the search box is cleared.
+        this.originalResultsHtml = this.elements.$results.html();
+        this.searchTimeout = null;
+        this.activeRequest = null;
+    }
 
-        this.elements.$cards.each((index, card) => {
-            const $card = jQuery(card);
-            const title = $card.data('title') || '';
+    handleInput(event) {
+        const query = event.target.value.trim();
 
-            if (title.indexOf(query) > -1) {
-                $card.show();
-                visibleCount++;
+        clearTimeout(this.searchTimeout);
+
+        if ('' === query) {
+            this.restoreOriginalResults();
+            return;
+        }
+
+        this.searchTimeout = setTimeout(() => this.runSearch(query), this.getSettings('debounceMs'));
+    }
+
+    runSearch(query) {
+        if (this.activeRequest) {
+            this.activeRequest.abort();
+        }
+
+        const $wrapper = this.elements.$wrapper;
+        const category = $wrapper.data('category') || 'e-magazines';
+
+        this.elements.$results.css('opacity', '0.4');
+
+        this.activeRequest = jQuery.ajax({
+            url: hseMagazineSearch.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'hse_magazine_search',
+                nonce: hseMagazineSearch.nonce,
+                search: query,
+                category: category
+            }
+        }).done((response) => {
+            this.elements.$results.css('opacity', '1');
+
+            if (!response || !response.success) {
+                return;
+            }
+
+            if (response.data.count > 0) {
+                this.elements.$results.html(
+                    '<div class="magazine-grid">' + response.data.html + '</div>'
+                );
             } else {
-                $card.hide();
+                this.elements.$results.html(
+                    '<p class="magazine-no-results" style="text-align:center; padding: 40px; color:#7A7A7A;">No matching editions found.</p>'
+                );
+            }
+        }).fail((jqXHR, textStatus) => {
+            if ('abort' !== textStatus) {
+                this.elements.$results.css('opacity', '1');
             }
         });
+    }
 
-        if (visibleCount === 0) {
-            this.elements.$noResults.show();
-            this.elements.$grid.css('opacity', '0.2');
-        } else {
-            this.elements.$noResults.hide();
-            this.elements.$grid.css('opacity', '1');
+    restoreOriginalResults() {
+        if (this.activeRequest) {
+            this.activeRequest.abort();
         }
+        this.elements.$results.css('opacity', '1');
+        this.elements.$results.html(this.originalResultsHtml);
     }
 }
 
