@@ -223,3 +223,11 @@ require_once ASTRA_THEME_DIR . 'inc/business-directory/taxonomies.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/acf-fields.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/facetwp-facets.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/enqueue.php';
+
+/**
+ * HSE Magazine Archive Elementor widget.
+ * Migrated from an Angie code-snippet (originally database-stored, deployed
+ * to disk by the Angie plugin) into theme code, now version-controlled and
+ * independent of Angie, which has since been removed.
+ */
+require_once ASTRA_THEME_DIR . 'inc/magazine-archive/register.php';
