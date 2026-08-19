@@ -62,27 +62,91 @@ function bdf_seed_badge_terms() {
 }
 
 // ---------------------------------------------------------------------
-// 2. Delete placeholder/test business posts (and any media attached
+// 2. Delete the ORIGINAL placeholder/test business posts that came with
+//    the site's initial "Business" feature build (and any media attached
 //    directly to them), so real content entry starts clean.
+//
+//    Deliberately targets only this specific, known ID list rather than
+//    "every business post" -- once this step has run, any business posts
+//    added afterwards (demo content, real suppliers) must never be
+//    touched by re-running this migration. Guarded with an option flag
+//    as a second safeguard against ever re-deleting real content.
 // ---------------------------------------------------------------------
 function bdf_delete_placeholder_business_posts() {
-	$posts = get_posts( [ 'post_type' => 'business', 'post_status' => 'any', 'numberposts' => -1, 'fields' => 'ids' ] );
-	if ( empty( $posts ) ) {
-		bdf_log( 'No business posts present, skipping.' );
+	if ( get_option( 'bdf_placeholder_posts_cleared' ) ) {
+		bdf_log( 'Original placeholder business posts already cleared, skipping.' );
 		return;
 	}
-	foreach ( $posts as $post_id ) {
+
+	$original_placeholder_ids = [ 43028, 26398, 1134, 1127, 1011, 1009, 1006 ];
+	$deleted = 0;
+
+	foreach ( $original_placeholder_ids as $post_id ) {
+		$post = get_post( $post_id );
+		if ( ! $post || $post->post_type !== 'business' ) {
+			continue;
+		}
 		$attachments = get_posts( [ 'post_type' => 'attachment', 'post_parent' => $post_id, 'numberposts' => -1, 'fields' => 'ids' ] );
 		foreach ( $attachments as $att_id ) {
 			wp_delete_attachment( $att_id, true );
 		}
 		wp_delete_post( $post_id, true );
+		$deleted++;
 	}
-	bdf_log( 'Deleted ' . count( $posts ) . ' placeholder business post(s).' );
+
+	update_option( 'bdf_placeholder_posts_cleared', 1 );
+	bdf_log( "Deleted $deleted original placeholder business post(s)." );
 }
 
 // ---------------------------------------------------------------------
-// 3. Remove the Elementor Theme Builder templates this feature used to
+// 3. Fix the sitewide Search Archive template (1144, condition
+//    include/archive/search -- renders on WordPress's search results
+//    page, not specific to suppliers at all) BEFORE deleting the loop
+//    card below: it displays each result using a "Custom" skin pointing
+//    at template 1016. Once 1016 is deleted, that reference would go
+//    dangling and every search result would render empty. Switch it to
+//    Elementor's built-in "Classic" skin instead, which needs no
+//    external template and works for any post type.
+// ---------------------------------------------------------------------
+function bdf_fix_search_archive_skin() {
+	$post_id = 1144;
+	if ( ! get_post( $post_id ) ) {
+		bdf_log( "Search Archive template ($post_id) not found, skipping." );
+		return;
+	}
+	$raw = get_post_meta( $post_id, '_elementor_data', true );
+	if ( strpos( $raw, '"archive_custom_skin_template":"1016"' ) === false ) {
+		bdf_log( 'Search Archive template already fixed or does not reference the loop card, skipping.' );
+		return;
+	}
+
+	$data = json_decode( $raw, true );
+	if ( ! is_array( $data ) ) {
+		bdf_log( "WARNING: could not decode _elementor_data for $post_id" );
+		return;
+	}
+
+	$fix = function ( &$els ) use ( &$fix ) {
+		foreach ( $els as &$el ) {
+			if ( ( $el['widgetType'] ?? '' ) === 'archive-posts' && ( $el['settings']['_skin'] ?? '' ) === 'archive_custom' ) {
+				$el['settings']['_skin'] = 'archive_classic';
+				unset( $el['settings']['archive_custom_skin_template'] );
+			}
+			if ( ! empty( $el['elements'] ) ) {
+				$fix( $el['elements'] );
+			}
+		}
+	};
+	$fix( $data );
+
+	update_post_meta( $post_id, '_elementor_data', wp_slash( wp_json_encode( $data ) ) );
+	delete_post_meta( $post_id, '_elementor_css' );
+	delete_post_meta( $post_id, '_elementor_element_cache_unique_id' );
+	bdf_log( 'Fixed Search Archive template: switched from the (about to be deleted) custom loop skin to Classic.' );
+}
+
+// ---------------------------------------------------------------------
+// 4. Remove the Elementor Theme Builder templates this feature used to
 //    rely on -- Elementor is no longer involved in this section.
 // ---------------------------------------------------------------------
 function bdf_delete_elementor_templates() {
@@ -98,7 +162,7 @@ function bdf_delete_elementor_templates() {
 }
 
 // ---------------------------------------------------------------------
-// 4. Strip Elementor from the directory page and assign the new,
+// 5. Strip Elementor from the directory page and assign the new,
 //    code-based Page Template instead.
 // ---------------------------------------------------------------------
 function bdf_convert_directory_page() {
@@ -122,7 +186,7 @@ function bdf_convert_directory_page() {
 }
 
 // ---------------------------------------------------------------------
-// 5. Nav menu: add the directory page if not already present.
+// 6. Nav menu: add the directory page if not already present.
 // ---------------------------------------------------------------------
 function bdf_add_nav_menu_item() {
 	$menu = wp_get_nav_menu_object( 'Primary Menu' );
@@ -149,7 +213,7 @@ function bdf_add_nav_menu_item() {
 }
 
 // ---------------------------------------------------------------------
-// 6. Remove now-redundant database copies of anything that moved into
+// 7. Remove now-redundant database copies of anything that moved into
 //    code (harmless no-op if this environment never had them).
 // ---------------------------------------------------------------------
 function bdf_remove_redundant_db_copies() {
@@ -192,6 +256,7 @@ function bdf_remove_redundant_db_copies() {
 // ---------------------------------------------------------------------
 bdf_seed_badge_terms();
 bdf_delete_placeholder_business_posts();
+bdf_fix_search_archive_skin();
 bdf_delete_elementor_templates();
 bdf_convert_directory_page();
 bdf_add_nav_menu_item();
