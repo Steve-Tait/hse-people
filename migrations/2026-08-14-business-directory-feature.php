@@ -106,7 +106,11 @@ function bdf_delete_placeholder_business_posts() {
 //    at template 1016. Once 1016 is deleted, that reference would go
 //    dangling and every search result would render empty. Switch it to
 //    Elementor's built-in "Classic" skin instead, which needs no
-//    external template and works for any post type.
+//    external template and works for any post type. While we're in
+//    there: Classic's meta row defaults to ['date','comments'] when
+//    unset, which shows "No Comments" on every result (search results,
+//    including businesses, are never meant to display a comment count)
+//    -- pin it to just 'date'.
 // ---------------------------------------------------------------------
 function bdf_fix_search_archive_skin() {
 	$post_id = 1144;
@@ -131,6 +135,7 @@ function bdf_fix_search_archive_skin() {
 			if ( ( $el['widgetType'] ?? '' ) === 'archive-posts' && ( $el['settings']['_skin'] ?? '' ) === 'archive_custom' ) {
 				$el['settings']['_skin'] = 'archive_classic';
 				unset( $el['settings']['archive_custom_skin_template'] );
+				$el['settings']['archive_classic_meta_data'] = [ 'date' ];
 			}
 			if ( ! empty( $el['elements'] ) ) {
 				$fix( $el['elements'] );
@@ -142,7 +147,7 @@ function bdf_fix_search_archive_skin() {
 	update_post_meta( $post_id, '_elementor_data', wp_slash( wp_json_encode( $data ) ) );
 	delete_post_meta( $post_id, '_elementor_css' );
 	delete_post_meta( $post_id, '_elementor_element_cache_unique_id' );
-	bdf_log( 'Fixed Search Archive template: switched from the (about to be deleted) custom loop skin to Classic.' );
+	bdf_log( 'Fixed Search Archive template: switched from the (about to be deleted) custom loop skin to Classic, and removed the comment count from its meta row.' );
 }
 
 // ---------------------------------------------------------------------
