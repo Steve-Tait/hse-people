@@ -79,17 +79,20 @@ get_header(); ?>
 								</div>
 							<?php endif; ?>
 
+							<?php // ACF's get_field() already returns rendered oEmbed <iframe> HTML for
+							// this field type -- wp_kses_post() would strip the iframe, so this
+							// is output as-is, same as WordPress core does for its own oEmbeds. ?>
 							<?php if ( $review_url ) : ?>
 								<div class="business-single__video">
 									<h2>Review Video</h2>
-									<?php echo wp_oembed_get( $review_url ); ?>
+									<?php echo $review_url; ?>
 								</div>
 							<?php endif; ?>
 
 							<?php if ( $demo_url ) : ?>
 								<div class="business-single__video">
 									<h2>Demonstration Video</h2>
-									<?php echo wp_oembed_get( $demo_url ); ?>
+									<?php echo $demo_url; ?>
 								</div>
 							<?php endif; ?>
 
