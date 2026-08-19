@@ -16,6 +16,14 @@
 	margin-bottom: 0.4em;
 }
 
+.business-directory__genre-description {
+	color: #555;
+}
+
+.business-directory__genre-description p:last-child {
+	margin-bottom: 0;
+}
+
 .business-directory-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -284,4 +292,14 @@
 
 .business-single__terms {
 	margin: 0 0 1em;
+}
+
+.business-single__terms a {
+	color: #044f8d;
+	text-decoration: none;
+	font-weight: 500;
+}
+
+.business-single__terms a:hover {
+	text-decoration: underline;
 }

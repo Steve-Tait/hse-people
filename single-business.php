@@ -108,7 +108,13 @@ get_header(); ?>
 							<?php if ( ! empty( $genres ) ) : ?>
 								<h2>Category</h2>
 								<p class="business-single__terms">
-									<?php echo esc_html( implode( ', ', wp_list_pluck( $genres, 'name' ) ) ); ?>
+									<?php
+									$genre_links = array_map( function ( $genre ) {
+										$url = home_url( '/business-directory/category/' . $genre->slug . '/' );
+										return '<a href="' . esc_url( $url ) . '">' . esc_html( $genre->name ) . '</a>';
+									}, $genres );
+									echo wp_kses_post( implode( ', ', $genre_links ) );
+									?>
 								</p>
 							<?php endif; ?>
 

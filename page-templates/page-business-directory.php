@@ -33,10 +33,15 @@ get_header(); ?>
 					<div class="business-directory__intro">
 						<?php if ( $locked_genre_term ) : ?>
 							<h1><?php echo esc_html( $locked_genre_term->name ); ?> <?php esc_html_e( 'Suppliers', 'astra' ); ?></h1>
+							<?php if ( ! empty( $locked_genre_term->description ) ) : ?>
+								<div class="business-directory__genre-description">
+									<?php echo wp_kses_post( wpautop( $locked_genre_term->description ) ); ?>
+								</div>
+							<?php endif; ?>
 						<?php else : ?>
 							<?php the_title( '<h1>', '</h1>' ); ?>
+							<?php the_content(); ?>
 						<?php endif; ?>
-						<?php the_content(); ?>
 					</div>
 				<?php endwhile; ?>
 
