@@ -45,6 +45,32 @@ get_header(); ?>
 					</div>
 				<?php endwhile; ?>
 
+				<?php if ( ! $locked_genre_term ) :
+					$genre_terms = get_terms( [
+						'taxonomy'   => 'business_genre',
+						'hide_empty' => true,
+					] );
+					?>
+					<?php if ( ! empty( $genre_terms ) && ! is_wp_error( $genre_terms ) ) : ?>
+						<div class="business-directory__categories">
+							<h2><?php esc_html_e( 'Browse by Category', 'astra' ); ?></h2>
+							<div class="business-directory-category-grid">
+								<?php foreach ( $genre_terms as $genre_term ) : ?>
+									<a class="business-directory-category-tile" href="<?php echo esc_url( home_url( '/business-directory/category/' . $genre_term->slug . '/' ) ); ?>">
+										<span class="business-directory-category-tile__name"><?php echo esc_html( $genre_term->name ); ?></span>
+										<span class="business-directory-category-tile__count">
+											<?php
+											/* translators: %d: number of suppliers in this category */
+											echo esc_html( sprintf( _n( '%d supplier', '%d suppliers', $genre_term->count, 'astra' ), $genre_term->count ) );
+											?>
+										</span>
+									</a>
+								<?php endforeach; ?>
+							</div>
+						</div>
+					<?php endif; ?>
+				<?php endif; ?>
+
 				<div class="business-directory__filters">
 					<div class="business-directory__search">
 						<h3><?php esc_html_e( 'Search', 'astra' ); ?></h3>

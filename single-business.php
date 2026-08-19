@@ -53,9 +53,7 @@ get_header(); ?>
 
 						<?php if ( ! empty( $badges ) ) : ?>
 							<p class="business-single__badges">
-								<?php foreach ( $badges as $badge ) : ?>
-									<span class="business-card__badge"><?php echo esc_html( $badge->name ); ?></span>
-								<?php endforeach; ?>
+								<?php hse_business_render_badges( $badges ); ?>
 							</p>
 						<?php endif; ?>
 					</div>
@@ -99,14 +97,16 @@ get_header(); ?>
 						</div>
 
 						<aside class="business-single__sidebar">
-							<h2>Contact Details</h2>
-							<ul class="business-single__contact">
-								<?php if ( $phone ) : ?><li><strong>Phone:</strong> <?php echo esc_html( $phone ); ?></li><?php endif; ?>
-								<?php if ( $fax ) : ?><li><strong>Fax:</strong> <?php echo esc_html( $fax ); ?></li><?php endif; ?>
-								<?php if ( $email ) : ?><li><strong>Email:</strong> <a href="mailto:<?php echo esc_attr( $email ); ?>"><?php echo esc_html( $email ); ?></a></li><?php endif; ?>
-								<?php if ( $website ) : ?><li><strong>Website:</strong> <a href="<?php echo esc_url( $website ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $website ); ?></a></li><?php endif; ?>
-								<?php if ( $address ) : ?><li><strong>Address:</strong> <?php echo esc_html( $address ); ?><?php echo $zip ? ', ' . esc_html( $zip ) : ''; ?></li><?php endif; ?>
-							</ul>
+							<?php if ( $phone || $fax || $email || $website || $address ) : ?>
+								<h2>Contact Details</h2>
+								<ul class="business-single__contact">
+									<?php if ( $phone ) : ?><li><?php echo hse_business_icon( 'phone' ); ?><span><?php echo esc_html( $phone ); ?></span></li><?php endif; ?>
+									<?php if ( $fax ) : ?><li><strong>Fax:</strong> <?php echo esc_html( $fax ); ?></li><?php endif; ?>
+									<?php if ( $email ) : ?><li><?php echo hse_business_icon( 'email' ); ?><a href="mailto:<?php echo esc_attr( $email ); ?>"><?php echo esc_html( $email ); ?></a></li><?php endif; ?>
+									<?php if ( $website ) : ?><li><?php echo hse_business_icon( 'website' ); ?><a href="<?php echo esc_url( $website ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $website ); ?></a></li><?php endif; ?>
+									<?php if ( $address ) : ?><li><?php echo hse_business_icon( 'address' ); ?><span><?php echo esc_html( $address ); ?><?php echo $zip ? ', ' . esc_html( $zip ) : ''; ?></span></li><?php endif; ?>
+								</ul>
+							<?php endif; ?>
 
 							<?php if ( ! empty( $genres ) ) : ?>
 								<h2>Category</h2>

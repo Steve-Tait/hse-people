@@ -219,6 +219,7 @@ require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-functions.php';
  * CPT UI, matching the site's existing convention; these files register
  * the new pieces added on top of that in version-controlled code instead.
  */
+require_once ASTRA_THEME_DIR . 'inc/business-directory/helpers.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/taxonomies.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/acf-fields.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/facetwp-facets.php';

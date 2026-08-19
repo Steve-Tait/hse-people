@@ -28,9 +28,7 @@ $badges = is_array( $badges ) ? $badges : [];
 
 		<?php if ( ! empty( $badges ) ) : ?>
 			<p class="business-card__badges">
-				<?php foreach ( $badges as $badge ) : ?>
-					<span class="business-card__badge"><?php echo esc_html( $badge->name ); ?></span>
-				<?php endforeach; ?>
+				<?php hse_business_render_badges( $badges ); ?>
 			</p>
 		<?php endif; ?>
 
