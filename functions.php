@@ -223,6 +223,7 @@ require_once ASTRA_THEME_DIR . 'inc/business-directory/taxonomies.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/acf-fields.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/facetwp-facets.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/enqueue.php';
+require_once ASTRA_THEME_DIR . 'inc/business-directory/rewrite.php';
 
 /**
  * HSE Magazine Archive Elementor widget.
