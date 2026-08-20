@@ -306,7 +306,12 @@
 
 .facetwp-input-wrap {
 	position: relative;
-	display: flex;
+	/* FacetWP's own front.css sets `display: inline-block` on this same
+	 * selector, loaded after this stylesheet in wp_footer -- at equal
+	 * specificity the later rule wins, so it was shrinking to the input's
+	 * content width instead of filling .business-directory__search. */
+	display: flex !important;
+	width: 100%;
 	align-items: center;
 }
 
@@ -331,16 +336,21 @@
 }
 
 .facetwp-icon {
-	position: absolute;
-	right: 18px;
-	top: 50%;
-	transform: translateY(-50%);
-	width: 16px;
-	height: 16px;
-	background: currentColor;
-	color: #A0AEC0;
-	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") center / contain no-repeat;
-	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") center / contain no-repeat;
+	/* FacetWP's own front.css has a same-specificity `.facetwp-icon` rule
+	 * (right: 0; height: 100%; ...) loaded after this stylesheet in
+	 * wp_footer, which was winning on source order and pinning the icon
+	 * flush to the edge at the wrong size. !important throughout so our
+	 * sizing/position governs regardless of load order. */
+	position: absolute !important;
+	right: 18px !important;
+	top: 50% !important;
+	transform: translateY(-50%) !important;
+	width: 16px !important;
+	height: 16px !important;
+	background: currentColor !important;
+	color: #A0AEC0 !important;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") center / contain no-repeat !important;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") center / contain no-repeat !important;
 	pointer-events: none;
 }
 
