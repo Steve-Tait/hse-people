@@ -19,8 +19,6 @@ get_header(); ?>
 		<main id="main" class="site-main">
 			<?php while ( have_posts() ) : the_post();
 
-				$logo        = get_field( 'logo' );
-				$cover       = get_field( 'cover_image' );
 				$phone       = get_field( 'business_phone_number' );
 				$fax         = get_field( 'business_fax' );
 				$email       = get_field( 'business_contact_email' );
@@ -40,13 +38,9 @@ get_header(); ?>
 
 				<article <?php post_class( 'business-single' ); ?>>
 
-					<?php if ( $cover ) : ?>
-						<div class="business-single__cover" style="background-image:url('<?php echo esc_url( $cover['url'] ); ?>');"></div>
-					<?php endif; ?>
-
 					<div class="business-single__header">
-						<?php if ( $logo ) : ?>
-							<img class="business-single__logo" src="<?php echo esc_url( $logo['sizes']['medium'] ?? $logo['url'] ); ?>" alt="<?php echo esc_attr( $logo['alt'] ?? get_the_title() ); ?>">
+						<?php if ( has_post_thumbnail() ) : ?>
+							<?php the_post_thumbnail( 'medium', [ 'class' => 'business-single__logo' ] ); ?>
 						<?php endif; ?>
 
 						<h1 class="business-single__title"><?php the_title(); ?></h1>
@@ -68,7 +62,7 @@ get_header(); ?>
 
 							<?php if ( ! empty( $gallery ) ) : ?>
 								<div class="business-single__gallery">
-									<h2>Gallery</h2>
+									<h3 class="business-single__section-title">Gallery</h3>
 									<div class="business-single__gallery-grid">
 										<?php foreach ( $gallery as $image ) : ?>
 											<img src="<?php echo esc_url( $image['sizes']['medium'] ?? $image['url'] ); ?>" alt="<?php echo esc_attr( $image['alt'] ?? '' ); ?>">
@@ -82,14 +76,14 @@ get_header(); ?>
 							// is output as-is, same as WordPress core does for its own oEmbeds. ?>
 							<?php if ( $review_url ) : ?>
 								<div class="business-single__video">
-									<h2>Review Video</h2>
+									<h3 class="business-single__section-title">Review Video</h3>
 									<?php echo $review_url; ?>
 								</div>
 							<?php endif; ?>
 
 							<?php if ( $demo_url ) : ?>
 								<div class="business-single__video">
-									<h2>Demonstration Video</h2>
+									<h3 class="business-single__section-title">Demonstration Video</h3>
 									<?php echo $demo_url; ?>
 								</div>
 							<?php endif; ?>
@@ -98,7 +92,7 @@ get_header(); ?>
 
 						<aside class="business-single__sidebar">
 							<?php if ( $phone || $fax || $email || $website || $address ) : ?>
-								<h2>Contact Details</h2>
+								<h3 class="business-single__section-title">Contact Details</h3>
 								<ul class="business-single__contact">
 									<?php if ( $phone ) : ?><li><?php echo hse_business_icon( 'phone' ); ?><span><?php echo esc_html( $phone ); ?></span></li><?php endif; ?>
 									<?php if ( $fax ) : ?><li><strong>Fax:</strong> <?php echo esc_html( $fax ); ?></li><?php endif; ?>
@@ -109,20 +103,18 @@ get_header(); ?>
 							<?php endif; ?>
 
 							<?php if ( ! empty( $genres ) ) : ?>
-								<h2>Category</h2>
-								<p class="business-single__terms">
-									<?php
-									$genre_links = array_map( function ( $genre ) {
+								<h3 class="business-single__section-title">Category</h3>
+								<div class="business-single__term-pills">
+									<?php foreach ( $genres as $genre ) :
 										$url = home_url( '/business-directory/category/' . $genre->slug . '/' );
-										return '<a href="' . esc_url( $url ) . '">' . esc_html( $genre->name ) . '</a>';
-									}, $genres );
-									echo wp_kses_post( implode( ', ', $genre_links ) );
-									?>
-								</p>
+										?>
+										<a class="business-single__term-pill" href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $genre->name ); ?></a>
+									<?php endforeach; ?>
+								</div>
 							<?php endif; ?>
 
 							<?php if ( ! empty( $tags ) ) : ?>
-								<h2>Tags</h2>
+								<h3 class="business-single__section-title">Tags</h3>
 								<p class="business-single__terms">
 									<?php echo esc_html( implode( ', ', wp_list_pluck( $tags, 'name' ) ) ); ?>
 								</p>

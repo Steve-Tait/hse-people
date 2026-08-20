@@ -90,10 +90,16 @@
 	color: inherit;
 }
 
-.business-card__logo img {
-	max-height: 60px;
-	width: auto;
+.business-card__logo {
+	height: 80px;
 	margin-bottom: 0.75em;
+}
+
+.business-card__logo img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	object-position: left center;
 }
 
 .business-card__title {
@@ -439,25 +445,25 @@
 
 /* Single supplier page */
 
-.business-single__cover {
-	height: 260px;
-	background-size: cover;
-	background-position: center;
-	border-radius: 6px;
-	margin-bottom: -50px;
-}
-
 .business-single__header {
 	padding: 0;
 }
 
 .business-single__logo {
-	max-height: 90px;
-	width: auto;
+	display: block;
+	width: 120px;
+	height: 120px;
+	object-fit: contain;
 	background: #fff;
 	border-radius: 6px;
-	padding: 0.5em;
+	padding: 0.6em;
 	box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
+	margin: 0 0 1em;
+}
+
+.business-single__section-title {
+	font-size: 1.1em;
+	margin: 0 0 0.8em;
 }
 
 .business-single__body {
@@ -518,6 +524,30 @@
 	flex: none;
 	margin-top: 0.15em;
 	color: #044f8d;
+}
+
+.business-single__term-pills {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5em;
+	margin: 0 0 1em;
+}
+
+.business-single__term-pill {
+	display: inline-block;
+	padding: 0.35em 0.9em;
+	background: color-mix(in srgb, #044f8d 12%, #fff);
+	color: #044f8d;
+	border-radius: 20px;
+	text-decoration: none;
+	font-weight: 500;
+	font-size: 0.9em;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.business-single__term-pill:hover {
+	background: #044f8d;
+	color: #fff;
 }
 
 .business-single__terms {

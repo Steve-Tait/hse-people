@@ -9,7 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$logo   = get_field( 'logo' );
 $badges = get_the_terms( get_the_ID(), 'business_badge' );
 $badges = is_array( $badges ) ? $badges : [];
 ?>
@@ -18,9 +17,9 @@ $badges = is_array( $badges ) ? $badges : [];
 
 	<a class="business-card__link" href="<?php the_permalink(); ?>">
 
-		<?php if ( $logo ) : ?>
+		<?php if ( has_post_thumbnail() ) : ?>
 			<div class="business-card__logo">
-				<img src="<?php echo esc_url( $logo['sizes']['thumbnail'] ?? $logo['url'] ); ?>" alt="<?php echo esc_attr( $logo['alt'] ?? get_the_title() ); ?>">
+				<?php the_post_thumbnail( 'thumbnail' ); ?>
 			</div>
 		<?php endif; ?>
 

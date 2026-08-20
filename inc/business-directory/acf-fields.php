@@ -85,7 +85,12 @@ add_action( 'acf/init', function () {
 				'type'          => 'gallery',
 				'return_format' => 'array',
 				'preview_size'  => 'medium',
-				'library'       => 'uploadedTo',
+				// 'uploadedTo' restricted the picker to images already
+				// attached to this specific post, which for most posts is
+				// none -- making the field look unusable/empty. 'all' opens
+				// it up to the whole media library, like every other image
+				// field in this group.
+				'library'       => 'all',
 				'mime_types'    => 'jpeg,jpg,gif,png',
 			],
 			[
@@ -94,26 +99,6 @@ add_action( 'acf/init', function () {
 				'name'        => 'video',
 				'type'        => 'oembed',
 				'instructions' => 'Youtube or Vimeo Link',
-			],
-			[
-				'key'           => 'field_7d33c72367b4',
-				'label'         => 'Logo',
-				'name'          => 'logo',
-				'type'          => 'image',
-				'instructions'  => 'Supplier logo (square works best)',
-				'return_format' => 'array',
-				'preview_size'  => 'medium',
-				'library'       => 'all',
-			],
-			[
-				'key'           => 'field_4b6768ef1b45',
-				'label'         => 'Cover Image',
-				'name'          => 'cover_image',
-				'type'          => 'image',
-				'instructions'  => 'Wide banner image shown at the top of the supplier page',
-				'return_format' => 'array',
-				'preview_size'  => 'large',
-				'library'       => 'all',
 			],
 			[
 				'key'         => 'field_b0a5e9148813',
