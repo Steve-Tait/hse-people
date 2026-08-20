@@ -30,7 +30,12 @@ add_filter( 'facetwp_facets', function ( $facets ) {
 			'count'           => '10',
 			'source_other'    => '',
 			'show_expanded'   => 'no',
-			'ghosts'          => 'no',
+			// 'yes': badges that would no longer match (0 results) once a
+			// filter is applied stay visible but disabled/greyed out,
+			// instead of disappearing -- so the full list is always there
+			// to filter further, not just whatever's left after the first
+			// selection.
+			'ghosts'          => 'yes',
 			'preserve_ghosts' => 'no',
 			// 'or': a business matching ANY selected badge is included.
 			// 'and' (FacetWP's default) required matching ALL of them,

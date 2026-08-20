@@ -203,6 +203,13 @@
 
 .facet-dropdown__toggle:hover,
 .facet-dropdown.is-open .facet-dropdown__toggle {
+	/* Astra's global "Buttons" Customizer style sets button:hover {
+	 * background-color: #98c1d9; color: #fff; } site-wide -- since this
+	 * toggle is a real <button>, it inherited that blue hover background.
+	 * Neither property was touched by this rule before, so nothing here
+	 * competed with it; pin both back explicitly. */
+	background: #fff;
+	color: #333;
 	border-color: #1368AA;
 	box-shadow: 0 4px 15px rgba(19, 104, 170, 0.1);
 }
