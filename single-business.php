@@ -19,15 +19,17 @@ get_header(); ?>
 		<main id="main" class="site-main">
 			<?php while ( have_posts() ) : the_post();
 
-				$phone       = get_field( 'business_phone_number' );
-				$fax         = get_field( 'business_fax' );
-				$email       = get_field( 'business_contact_email' );
-				$website     = get_field( 'business_website_address' );
-				$address     = get_field( 'business_address' );
-				$zip         = get_field( 'zip_code' );
-				$gallery     = get_field( 'business_gallery' );
-				$review_url  = get_field( 'video' );
-				$demo_url    = get_field( 'demonstration_video' );
+				$post_id     = get_the_ID();
+				$phone       = get_post_meta( $post_id, 'business_phone_number', true );
+				$fax         = get_post_meta( $post_id, 'business_fax', true );
+				$email       = get_post_meta( $post_id, 'business_contact_email', true );
+				$website     = get_post_meta( $post_id, 'business_website_address', true );
+				$address     = get_post_meta( $post_id, 'business_address', true );
+				$zip         = get_post_meta( $post_id, 'zip_code', true );
+				$gallery_ids = get_post_meta( $post_id, 'business_gallery', true );
+				$gallery_ids = is_array( $gallery_ids ) ? $gallery_ids : [];
+				$review_url  = get_post_meta( $post_id, 'video', true );
+				$demo_url    = get_post_meta( $post_id, 'demonstration_video', true );
 				$genres      = get_the_terms( get_the_ID(), 'business_genre' );
 				$tags        = get_the_terms( get_the_ID(), 'business_tag' );
 				$badges      = get_the_terms( get_the_ID(), 'business_badge' );
@@ -60,31 +62,31 @@ get_header(); ?>
 								<?php the_content(); ?>
 							</div>
 
-							<?php if ( ! empty( $gallery ) ) : ?>
+							<?php if ( ! empty( $gallery_ids ) ) : ?>
 								<div class="business-single__gallery">
 									<h3 class="business-single__section-title">Gallery</h3>
 									<div class="business-single__gallery-grid">
-										<?php foreach ( $gallery as $image ) : ?>
-											<img src="<?php echo esc_url( $image['sizes']['medium'] ?? $image['url'] ); ?>" alt="<?php echo esc_attr( $image['alt'] ?? '' ); ?>">
-										<?php endforeach; ?>
+										<?php foreach ( $gallery_ids as $image_id ) :
+											echo wp_get_attachment_image( $image_id, 'medium' );
+										endforeach; ?>
 									</div>
 								</div>
 							<?php endif; ?>
 
-							<?php // ACF's get_field() already returns rendered oEmbed <iframe> HTML for
-							// this field type -- wp_kses_post() would strip the iframe, so this
-							// is output as-is, same as WordPress core does for its own oEmbeds. ?>
-							<?php if ( $review_url ) : ?>
+							<?php // wp_oembed_get() returns the provider's own <iframe> markup --
+							// wp_kses_post() would strip the iframe, so this is output as-is,
+							// same as WordPress core does for its own oEmbeds. ?>
+							<?php if ( $review_url && $review_embed = wp_oembed_get( $review_url ) ) : ?>
 								<div class="business-single__video">
 									<h3 class="business-single__section-title">Review Video</h3>
-									<?php echo $review_url; ?>
+									<?php echo $review_embed; ?>
 								</div>
 							<?php endif; ?>
 
-							<?php if ( $demo_url ) : ?>
+							<?php if ( $demo_url && $demo_embed = wp_oembed_get( $demo_url ) ) : ?>
 								<div class="business-single__video">
 									<h3 class="business-single__section-title">Demonstration Video</h3>
-									<?php echo $demo_url; ?>
+									<?php echo $demo_embed; ?>
 								</div>
 							<?php endif; ?>
 

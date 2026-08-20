@@ -221,7 +221,7 @@ require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-functions.php';
  */
 require_once ASTRA_THEME_DIR . 'inc/business-directory/helpers.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/taxonomies.php';
-require_once ASTRA_THEME_DIR . 'inc/business-directory/acf-fields.php';
+require_once ASTRA_THEME_DIR . 'inc/business-directory/meta-box.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/facetwp-facets.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/enqueue.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/rewrite.php';

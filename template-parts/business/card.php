@@ -31,7 +31,7 @@ $badges = is_array( $badges ) ? $badges : [];
 			</p>
 		<?php endif; ?>
 
-		<?php if ( $short_desc = get_field( 'short_business_description' ) ) : ?>
+		<?php if ( $short_desc = get_post_meta( get_the_ID(), 'short_business_description', true ) ) : ?>
 			<p class="business-card__excerpt"><?php echo esc_html( $short_desc ); ?></p>
 		<?php endif; ?>
 

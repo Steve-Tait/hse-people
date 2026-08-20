@@ -1,0 +1,37 @@
+.hse-business-gallery__items {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 0 0 10px;
+	padding: 0;
+	list-style: none;
+}
+
+.hse-business-gallery__item {
+	position: relative;
+	width: 80px;
+	height: 80px;
+}
+
+.hse-business-gallery__item img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+}
+
+.hse-business-gallery__remove {
+	position: absolute;
+	top: -6px;
+	right: -6px;
+	width: 20px;
+	height: 20px;
+	line-height: 18px;
+	padding: 0;
+	border-radius: 50%;
+	border: 1px solid #ccc;
+	background: #fff;
+	cursor: pointer;
+	font-size: 14px;
+}
