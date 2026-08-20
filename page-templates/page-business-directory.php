@@ -77,15 +77,9 @@ get_header(); ?>
 						<?php echo do_shortcode( '[facetwp facet="business_search"]' ); ?>
 					</div>
 					<?php if ( ! $locked_genre_term ) : ?>
-						<div class="business-directory__facet">
-							<h3><?php esc_html_e( 'Category', 'astra' ); ?></h3>
-							<?php echo do_shortcode( '[facetwp facet="business_genre"]' ); ?>
-						</div>
+						<?php get_template_part( 'template-parts/business/facet-dropdown', null, [ 'label' => __( 'Category', 'astra' ), 'facet' => 'business_genre' ] ); ?>
 					<?php endif; ?>
-					<div class="business-directory__facet">
-						<h3><?php esc_html_e( 'Badges', 'astra' ); ?></h3>
-						<?php echo do_shortcode( '[facetwp facet="business_badge"]' ); ?>
-					</div>
+					<?php get_template_part( 'template-parts/business/facet-dropdown', null, [ 'label' => __( 'Badges', 'astra' ), 'facet' => 'business_badge' ] ); ?>
 				</div>
 
 				<?php

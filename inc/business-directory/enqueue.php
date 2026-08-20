@@ -15,5 +15,13 @@ add_action( 'wp_enqueue_scripts', function () {
 			[],
 			defined( 'ASTRA_THEME_VERSION' ) ? ASTRA_THEME_VERSION : false
 		);
+
+		wp_enqueue_script(
+			'business-directory-facet-dropdown',
+			get_template_directory_uri() . '/inc/business-directory/assets/business-directory-facet-dropdown.js',
+			[],
+			defined( 'ASTRA_THEME_VERSION' ) ? ASTRA_THEME_VERSION : false,
+			true
+		);
 	}
 } );

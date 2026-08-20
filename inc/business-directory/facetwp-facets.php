@@ -33,7 +33,11 @@ add_filter( 'facetwp_facets', function ( $facets ) {
 			'ghosts'          => 'no',
 			'preserve_ghosts' => 'no',
 			'operator'        => 'and',
-			'soft_limit'      => '5',
+			// Rendered inside a scrollable dropdown panel (see
+			// template-parts/business/facet-dropdown.php), so all options
+			// are output directly rather than behind FacetWP's own
+			// "+ N more" soft-limit toggle.
+			'soft_limit'      => '',
 		];
 	}
 
