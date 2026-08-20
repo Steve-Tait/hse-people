@@ -137,6 +137,11 @@
 
 .business-directory__filters {
 	display: flex;
+	/* flex-start, not the default stretch: stretch would force every field
+	 * (search box, dropdowns) to the height of the tallest one, which also
+	 * pushed .facet-dropdown__panel's `top: 100%` down to the bottom of
+	 * that inflated box instead of sitting right under its own toggle. */
+	align-items: flex-start;
 	flex-wrap: wrap;
 	gap: 2em;
 	margin: 0 0 2em;
@@ -154,13 +159,21 @@
 	flex: 1 1 200px;
 }
 
-.business-directory__search h3 {
+.business-directory__field-label {
+	display: block;
 	margin: 0 0 0.6em;
 	font-size: 0.9em;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.03em;
 	color: #555;
+}
+
+/* FacetWP's own front.css sets a 40px margin-bottom on every facet -- loads
+ * in wp_footer (after this stylesheet), so !important is needed to win
+ * regardless of source order. */
+.facetwp-facet {
+	margin-bottom: 0 !important;
 }
 
 /* Category / Badges dropdown: styled like .facetwp-search below, but as a
@@ -192,6 +205,16 @@
 .facet-dropdown.is-open .facet-dropdown__toggle {
 	border-color: #1368AA;
 	box-shadow: 0 4px 15px rgba(19, 104, 170, 0.1);
+}
+
+.facet-dropdown__value {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.facet-dropdown__value.is-placeholder {
+	color: #A0AEC0;
 }
 
 .facet-dropdown__chevron {

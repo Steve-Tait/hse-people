@@ -73,8 +73,14 @@ get_header(); ?>
 
 				<div class="business-directory__filters">
 					<div class="business-directory__search">
-						<h3><?php esc_html_e( 'Search', 'astra' ); ?></h3>
-						<?php echo do_shortcode( '[facetwp facet="business_search"]' ); ?>
+						<label class="business-directory__field-label" for="business-directory-search-input"><?php esc_html_e( 'Search', 'astra' ); ?></label>
+						<?php
+						// FacetWP's search facet markup has no id on its <input> to hook a
+						// <label for> to, so one is added here -- the "facetwp-search"
+						// class name is part of FacetWP's own static template output.
+						$search_html = do_shortcode( '[facetwp facet="business_search"]' );
+						echo str_replace( 'class="facetwp-search"', 'id="business-directory-search-input" class="facetwp-search"', $search_html );
+						?>
 					</div>
 					<?php if ( ! $locked_genre_term ) : ?>
 						<?php get_template_part( 'template-parts/business/facet-dropdown', null, [ 'label' => __( 'Category', 'astra' ), 'facet' => 'business_genre' ] ); ?>

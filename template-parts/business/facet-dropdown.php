@@ -18,10 +18,14 @@ $facet = $args['facet'] ?? '';
 if ( ! $facet ) {
 	return;
 }
+
+$label_id   = 'facet-dropdown-label-' . $facet;
+$placeholder = __( 'Please select...', 'astra' );
 ?>
-<div class="business-directory__facet facet-dropdown" data-facet-dropdown>
-	<button type="button" class="facet-dropdown__toggle" aria-expanded="false" aria-haspopup="true">
-		<span class="facet-dropdown__label"><?php echo esc_html( $label ); ?></span>
+<div class="business-directory__facet facet-dropdown" data-facet-dropdown data-placeholder="<?php echo esc_attr( $placeholder ); ?>">
+	<label class="business-directory__field-label" id="<?php echo esc_attr( $label_id ); ?>"><?php echo esc_html( $label ); ?></label>
+	<button type="button" class="facet-dropdown__toggle" aria-expanded="false" aria-haspopup="true" aria-labelledby="<?php echo esc_attr( $label_id ); ?>">
+		<span class="facet-dropdown__value is-placeholder"><?php echo esc_html( $placeholder ); ?></span>
 		<svg class="facet-dropdown__chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 			<polyline points="6 9 12 15 18 9"></polyline>
 		</svg>

@@ -46,6 +46,32 @@
 		}
 	}
 
+	// Reflects the toggle's *applied* state, not the panel's live/pending
+	// checkbox state -- only called on load and after Apply/Reset, the
+	// points at which a selection actually takes effect.
+	function updateToggleText( wrap ) {
+		var valueEl = wrap.querySelector( '.facet-dropdown__value' );
+		if ( ! valueEl ) {
+			return;
+		}
+
+		var checked = wrap.querySelectorAll( '.facetwp-checkbox.checked' );
+
+		if ( 0 === checked.length ) {
+			valueEl.textContent = wrap.getAttribute( 'data-placeholder' ) || '';
+			valueEl.classList.add( 'is-placeholder' );
+		} else if ( 1 === checked.length ) {
+			var display = checked[ 0 ].querySelector( '.facetwp-display-value' );
+			valueEl.textContent = display ? display.textContent.trim() : '';
+			valueEl.classList.remove( 'is-placeholder' );
+		} else {
+			valueEl.textContent = checked.length + ' selected';
+			valueEl.classList.remove( 'is-placeholder' );
+		}
+	}
+
+	document.querySelectorAll( '[data-facet-dropdown]' ).forEach( updateToggleText );
+
 	// Intercept checkbox clicks before FacetWP's own handler sees them.
 	document.addEventListener( 'click', function ( e ) {
 		var checkbox = e.target.closest( '.facet-dropdown__panel .facetwp-checkbox:not(.disabled)' );
@@ -75,6 +101,7 @@
 		if ( apply ) {
 			var applyWrap = apply.closest( '[data-facet-dropdown]' );
 			refresh();
+			updateToggleText( applyWrap );
 			closeDropdown( applyWrap );
 			return;
 		}
@@ -86,6 +113,7 @@
 				cb.classList.remove( 'checked' );
 			} );
 			refresh();
+			updateToggleText( resetWrap );
 			closeDropdown( resetWrap );
 			return;
 		}
