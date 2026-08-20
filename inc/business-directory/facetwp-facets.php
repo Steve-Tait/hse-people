@@ -32,7 +32,10 @@ add_filter( 'facetwp_facets', function ( $facets ) {
 			'show_expanded'   => 'no',
 			'ghosts'          => 'no',
 			'preserve_ghosts' => 'no',
-			'operator'        => 'and',
+			// 'or': a business matching ANY selected badge is included.
+			// 'and' (FacetWP's default) required matching ALL of them,
+			// which meant selecting two badges usually matched nothing.
+			'operator'        => 'or',
 			// Rendered inside a scrollable dropdown panel (see
 			// template-parts/business/facet-dropdown.php), so all options
 			// are output directly rather than behind FacetWP's own

@@ -72,6 +72,15 @@
 
 	document.querySelectorAll( '[data-facet-dropdown]' ).forEach( updateToggleText );
 
+	// FacetWP re-applies filters carried in the URL (e.g. after a page
+	// refresh) via its own async AJAX call on load, so the checked classes
+	// aren't in the DOM yet at the point the pass above runs. FacetWP fires
+	// this event after every refresh completes -- including that initial
+	// one -- so re-sync all toggle labels whenever it does.
+	document.addEventListener( 'facetwp-loaded', function () {
+		document.querySelectorAll( '[data-facet-dropdown]' ).forEach( updateToggleText );
+	} );
+
 	// Intercept checkbox clicks before FacetWP's own handler sees them.
 	document.addEventListener( 'click', function ( e ) {
 		var checkbox = e.target.closest( '.facet-dropdown__panel .facetwp-checkbox:not(.disabled)' );
