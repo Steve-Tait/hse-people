@@ -499,14 +499,21 @@
 }
 
 .business-single__video iframe {
-	/* wp_oembed_get() outputs the provider's own fixed width/height
-	 * attributes (e.g. 500x281) as the iframe's intrinsic size. Browsers
-	 * use that as its native aspect ratio for replaced elements, so
-	 * `height: auto` alongside `max-width: 100%` scales it down
-	 * proportionally on narrow screens instead of shrinking only the
-	 * width and leaving the fixed height attribute untouched -- which is
-	 * what made it look oversized/stretched on mobile. */
+	/* Astra's own theme CSS has a blanket `iframe { position: absolute;
+	 * width: 100%; height: 100%; top: 0; left: 0; }` rule, meant to work
+	 * inside its own `.ast-oembed-container` aspect-ratio wrapper --
+	 * which wp_oembed_get() doesn't add here. With nothing overriding
+	 * `position`, this iframe was being absolutely positioned with no
+	 * sized containing block, so its height collapsed to the browser's
+	 * ~150px default fallback size for a replaced element with no
+	 * resolvable height, regardless of `height: auto` here. `position:
+	 * static` cancels that; aspect-ratio then sizes the iframe correctly
+	 * from its own width. */
+	position: static;
+	display: block;
+	width: 100%;
 	max-width: 100%;
+	aspect-ratio: 16 / 9;
 	height: auto;
 }
 
