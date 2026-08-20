@@ -499,7 +499,15 @@
 }
 
 .business-single__video iframe {
+	/* wp_oembed_get() outputs the provider's own fixed width/height
+	 * attributes (e.g. 500x281) as the iframe's intrinsic size. Browsers
+	 * use that as its native aspect ratio for replaced elements, so
+	 * `height: auto` alongside `max-width: 100%` scales it down
+	 * proportionally on narrow screens instead of shrinking only the
+	 * width and leaving the fixed height attribute untouched -- which is
+	 * what made it look oversized/stretched on mobile. */
 	max-width: 100%;
+	height: auto;
 }
 
 .business-single__sidebar {
