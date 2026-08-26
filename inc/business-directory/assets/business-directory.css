@@ -583,6 +583,62 @@
 	color: #044f8d;
 }
 
+.business-single__catalog-link {
+	display: inline-block;
+	margin: 0 0 1.2em;
+	padding: 0.6em 1.2em;
+	background: #044f8d;
+	color: #fff;
+	border-radius: 20px;
+	text-decoration: none;
+	font-weight: 600;
+	font-size: 0.9em;
+	transition: background-color 0.15s ease;
+}
+
+.business-single__catalog-link:hover {
+	background: #033c6b;
+	color: #fff;
+}
+
+.business-single__socials {
+	display: flex;
+	gap: 0.6em;
+	margin: 0 0 1.2em;
+}
+
+.business-single__social-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	background: #eef3f8;
+	color: #044f8d;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.business-single__social-link:hover {
+	background: #044f8d;
+	color: #fff;
+}
+
+.business-single__social-link .hse-icon {
+	width: 16px;
+	height: 16px;
+}
+
+.business-single__review-rating {
+	margin: 0 0 0.8em;
+	font-size: 1.1em;
+}
+
+.business-single__review-rating strong {
+	font-size: 1.5em;
+	color: #044f8d;
+}
+
 .business-single__term-pills {
 	display: flex;
 	flex-wrap: wrap;

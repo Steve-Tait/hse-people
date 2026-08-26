@@ -27,7 +27,6 @@ get_header(); ?>
 				$zip         = get_post_meta( $post_id, 'zip_code', true );
 				$gallery_ids = get_post_meta( $post_id, 'business_gallery', true );
 				$gallery_ids = is_array( $gallery_ids ) ? $gallery_ids : [];
-				$review_url  = get_post_meta( $post_id, 'video', true );
 				$demo_url    = get_post_meta( $post_id, 'demonstration_video', true );
 				$genres      = get_the_terms( get_the_ID(), 'business_genre' );
 				$tags        = get_the_terms( get_the_ID(), 'business_tag' );
@@ -35,6 +34,35 @@ get_header(); ?>
 				$genres      = is_array( $genres ) ? $genres : [];
 				$tags        = is_array( $tags ) ? $tags : [];
 				$badges      = is_array( $badges ) ? $badges : [];
+
+				// Tier gates which fields render, not which fields save --
+				// a downgraded business keeps its Standard/Premium data in
+				// the database (see save_post_business in meta-box.php),
+				// it just stops appearing here until upgraded again.
+				$tier = get_post_meta( $post_id, 'business_tier', true );
+				if ( ! in_array( $tier, [ 'standard', 'premium' ], true ) ) {
+					$tier = 'free';
+				}
+
+				$socials = [];
+				if ( in_array( $tier, [ 'standard', 'premium' ], true ) ) {
+					$socials = array_filter( [
+						'facebook'  => get_post_meta( $post_id, 'social_facebook', true ),
+						'youtube'   => get_post_meta( $post_id, 'social_youtube', true ),
+						'instagram' => get_post_meta( $post_id, 'social_instagram', true ),
+						'linkedin'  => get_post_meta( $post_id, 'social_linkedin', true ),
+						'x'         => get_post_meta( $post_id, 'social_x', true ),
+					] );
+				}
+
+				$review_url    = '';
+				$review_rating = '';
+				$catalog_url   = '';
+				if ( 'premium' === $tier ) {
+					$review_url    = get_post_meta( $post_id, 'video', true );
+					$review_rating = get_post_meta( $post_id, 'review_rating', true );
+					$catalog_url   = get_post_meta( $post_id, 'catalog_url', true );
+				}
 				?>
 
 				<article <?php post_class( 'business-single' ); ?>>
@@ -75,10 +103,15 @@ get_header(); ?>
 							<?php // wp_oembed_get() returns the provider's own <iframe> markup --
 							// wp_kses_post() would strip the iframe, so this is output as-is,
 							// same as WordPress core does for its own oEmbeds. ?>
-							<?php if ( $review_url && $review_embed = wp_oembed_get( $review_url ) ) : ?>
+							<?php if ( $review_url || $review_rating ) : ?>
 								<div class="business-single__video">
-									<h3 class="business-single__section-title">Review Video</h3>
-									<?php echo $review_embed; ?>
+									<h3 class="business-single__section-title">Review</h3>
+									<?php if ( $review_rating ) : ?>
+										<p class="business-single__review-rating"><strong><?php echo esc_html( $review_rating ); ?></strong> / 100</p>
+									<?php endif; ?>
+									<?php if ( $review_url && $review_embed = wp_oembed_get( $review_url ) ) : ?>
+										<?php echo $review_embed; ?>
+									<?php endif; ?>
 								</div>
 							<?php endif; ?>
 
@@ -100,6 +133,21 @@ get_header(); ?>
 									<?php if ( $website ) : ?><li><?php echo hse_business_icon( 'website' ); ?><a href="<?php echo esc_url( $website ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $website ); ?></a></li><?php endif; ?>
 									<?php if ( $address ) : ?><li><?php echo hse_business_icon( 'address' ); ?><span><?php echo esc_html( $address ); ?><?php echo $zip ? ', ' . esc_html( $zip ) : ''; ?></span></li><?php endif; ?>
 								</ul>
+							<?php endif; ?>
+
+							<?php if ( $catalog_url ) : ?>
+								<a class="business-single__catalog-link" href="<?php echo esc_url( $catalog_url ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'View Catalog', 'astra' ); ?> &#8599;</a>
+							<?php endif; ?>
+
+							<?php if ( ! empty( $socials ) ) : ?>
+								<h3 class="business-single__section-title">Follow</h3>
+								<p class="business-single__socials">
+									<?php foreach ( $socials as $network => $url ) : ?>
+										<a class="business-single__social-link" href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener" aria-label="<?php echo esc_attr( 'x' === $network ? 'X (Twitter)' : ucfirst( $network ) ); ?>">
+											<?php echo hse_business_social_icon( $network ); ?>
+										</a>
+									<?php endforeach; ?>
+								</p>
 							<?php endif; ?>
 
 							<?php if ( ! empty( $genres ) ) : ?>
