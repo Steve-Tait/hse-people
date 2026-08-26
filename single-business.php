@@ -67,44 +67,46 @@ get_header(); ?>
 
 				<article <?php post_class( 'business-single' ); ?>>
 
-					<div class="business-single__header">
-						<?php if ( has_post_thumbnail() ) : ?>
-							<?php the_post_thumbnail( 'medium', [ 'class' => 'business-single__logo' ] ); ?>
-						<?php endif; ?>
-
-						<h1 class="business-single__title"><?php the_title(); ?></h1>
-
-						<?php if ( ! empty( $badges ) ) : ?>
-							<p class="business-single__badges">
-								<?php hse_business_render_badges( $badges ); ?>
-							</p>
-						<?php endif; ?>
-					</div>
-
 					<div class="business-single__body">
 
 						<div class="business-single__main">
 
-							<div class="business-single__description">
-								<?php the_content(); ?>
-							</div>
+							<div class="business-single__panel business-single__panel--info">
+								<div class="business-single__header">
+									<?php if ( has_post_thumbnail() ) : ?>
+										<?php the_post_thumbnail( 'medium', [ 'class' => 'business-single__logo' ] ); ?>
+									<?php endif; ?>
 
-							<?php if ( ! empty( $gallery_ids ) ) : ?>
-								<div class="business-single__gallery">
-									<h3 class="business-single__section-title">Gallery</h3>
-									<div class="business-single__gallery-grid">
-										<?php foreach ( $gallery_ids as $image_id ) :
-											echo wp_get_attachment_image( $image_id, 'medium' );
-										endforeach; ?>
-									</div>
+									<h1 class="business-single__title"><?php the_title(); ?></h1>
+
+									<?php if ( ! empty( $badges ) ) : ?>
+										<p class="business-single__badges">
+											<?php hse_business_render_badges( $badges ); ?>
+										</p>
+									<?php endif; ?>
 								</div>
-							<?php endif; ?>
+
+								<div class="business-single__description">
+									<?php the_content(); ?>
+								</div>
+
+								<?php if ( ! empty( $gallery_ids ) ) : ?>
+									<div class="business-single__gallery">
+										<h3 class="business-single__section-title">Gallery</h3>
+										<div class="business-single__gallery-grid">
+											<?php foreach ( $gallery_ids as $image_id ) :
+												echo wp_get_attachment_image( $image_id, 'medium' );
+											endforeach; ?>
+										</div>
+									</div>
+								<?php endif; ?>
+							</div>
 
 							<?php // wp_oembed_get() returns the provider's own <iframe> markup --
 							// wp_kses_post() would strip the iframe, so this is output as-is,
 							// same as WordPress core does for its own oEmbeds. ?>
 							<?php if ( $review_url || $review_rating ) : ?>
-								<div class="business-single__video">
+								<div class="business-single__panel business-single__video">
 									<h3 class="business-single__section-title">Review</h3>
 									<?php if ( $review_rating ) : ?>
 										<p class="business-single__review-rating"><strong><?php echo esc_html( $review_rating ); ?></strong> / 100</p>
@@ -116,7 +118,7 @@ get_header(); ?>
 							<?php endif; ?>
 
 							<?php if ( $demo_url && $demo_embed = wp_oembed_get( $demo_url ) ) : ?>
-								<div class="business-single__video">
+								<div class="business-single__panel business-single__video">
 									<h3 class="business-single__section-title">Demonstration Video</h3>
 									<?php echo $demo_embed; ?>
 								</div>
@@ -124,7 +126,7 @@ get_header(); ?>
 
 						</div>
 
-						<aside class="business-single__sidebar">
+						<aside class="business-single__panel business-single__sidebar">
 							<?php if ( $phone || $email || $website || $address ) : ?>
 								<h3 class="business-single__section-title">Contact Details</h3>
 								<ul class="business-single__contact">
