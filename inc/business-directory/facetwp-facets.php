@@ -49,6 +49,35 @@ add_filter( 'facetwp_facets', function ( $facets ) {
 		];
 	}
 
+	if ( ! in_array( 'location', $names, true ) ) {
+		$facets[] = [
+			'name'            => 'location',
+			'label'           => 'Location',
+			'type'            => 'checkboxes',
+			'source'          => 'tax/location',
+			'parent_term'     => '',
+			'modifier_type'   => 'off',
+			'modifier_values' => '',
+			'hierarchical'    => 'yes',
+			'orderby'         => 'count',
+			'count'           => '10',
+			'source_other'    => '',
+			// Sub-locations are shown indented under their parent rather
+			// than hidden behind FacetWP's own expand/collapse toggle
+			// (which still appears, but starts open).
+			'show_expanded'   => 'yes',
+			'ghosts'          => 'yes',
+			'preserve_ghosts' => 'no',
+			// 'or': matches ANY selected location, not all of them --
+			// essential here since selecting a parent region checks its
+			// whole list of child locations (see
+			// business-directory-facet-dropdown.js), and a business can
+			// only ever be in one of them.
+			'operator'        => 'or',
+			'soft_limit'      => '',
+		];
+	}
+
 	if ( ! in_array( 'business_search', $names, true ) ) {
 		$facets[] = [
 			'name'              => 'business_search',

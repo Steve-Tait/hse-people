@@ -86,6 +86,7 @@ get_header(); ?>
 						<?php get_template_part( 'template-parts/business/facet-dropdown', null, [ 'label' => __( 'Category', 'astra' ), 'facet' => 'business_genre' ] ); ?>
 					<?php endif; ?>
 					<?php get_template_part( 'template-parts/business/facet-dropdown', null, [ 'label' => __( 'Badges', 'astra' ), 'facet' => 'business_badge' ] ); ?>
+					<?php get_template_part( 'template-parts/business/facet-dropdown', null, [ 'label' => __( 'Location', 'astra' ), 'facet' => 'location' ] ); ?>
 				</div>
 
 				<?php

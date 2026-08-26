@@ -367,6 +367,7 @@
 }
 
 .facetwp-checkbox {
+	position: relative;
 	display: flex;
 	align-items: center;
 	gap: 0.4em;
@@ -400,6 +401,44 @@
 .facetwp-checkbox.checked::before {
 	background: #044f8d;
 	border-color: #044f8d;
+}
+
+/* Location is a hierarchical facet: a parent region shows "partial" when
+ * some (not all) of its child locations are checked, and "full" (same as
+ * a normal checked box) once every child is -- see
+ * business-directory-facet-dropdown.js for the state logic. */
+
+.facetwp-checkbox.is-indeterminate::before {
+	background: #044f8d;
+	border-color: #044f8d;
+}
+
+.facetwp-checkbox.is-indeterminate::after {
+	content: '';
+	position: absolute;
+	left: 3px;
+	top: 50%;
+	width: 10px;
+	height: 2px;
+	background: #fff;
+	transform: translateY(-50%);
+	pointer-events: none;
+}
+
+/* FacetWP's own front.css sets `.facetwp-depth { margin-left: 12px; }` --
+ * bumped up here for clearer visual hierarchy against these larger
+ * custom-styled checkboxes. */
+.facetwp-depth {
+	margin-left: 22px !important;
+}
+
+.facetwp-expand {
+	margin-left: auto;
+	padding-left: 0.75em;
+	font-size: 0.85em;
+	color: #044f8d;
+	text-decoration: underline;
+	white-space: nowrap;
 }
 
 .facetwp-counter {

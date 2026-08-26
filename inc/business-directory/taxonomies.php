@@ -1,10 +1,10 @@
 <?php
 /**
- * Business directory taxonomies: Badges and Tags.
+ * Business directory taxonomies: Badges, Tags, and Location.
  *
  * `business_genre` (the category-equivalent) remains managed via CPT UI's
  * admin screens, matching the site's pre-existing convention for that
- * taxonomy. These two are new additions for the supplier directory feature
+ * taxonomy. These are new additions for the supplier directory feature
  * and are registered in code so they're version-controlled.
  */
 
@@ -41,6 +41,25 @@ add_action( 'init', function () {
 		'public'            => true,
 		'publicly_queryable' => true,
 		'hierarchical'      => false,
+		'show_ui'           => true,
+		'show_in_menu'      => true,
+		'show_in_nav_menus' => true,
+		'show_admin_column' => true,
+		'show_in_rest'      => true,
+		'query_var'         => true,
+		'rewrite'           => true,
+	] );
+
+	register_taxonomy( 'location', [ 'business' ], [
+		'label'             => 'Locations',
+		'labels'            => [
+			'name'          => 'Locations',
+			'singular_name' => 'Location',
+			'parent_item'   => 'Parent Location',
+		],
+		'public'            => true,
+		'publicly_queryable' => true,
+		'hierarchical'      => true,
 		'show_ui'           => true,
 		'show_in_menu'      => true,
 		'show_in_nav_menus' => true,
