@@ -21,7 +21,6 @@ get_header(); ?>
 
 				$post_id     = get_the_ID();
 				$phone       = get_post_meta( $post_id, 'business_phone_number', true );
-				$fax         = get_post_meta( $post_id, 'business_fax', true );
 				$email       = get_post_meta( $post_id, 'business_contact_email', true );
 				$website     = get_post_meta( $post_id, 'business_website_address', true );
 				$address     = get_post_meta( $post_id, 'business_address', true );
@@ -93,11 +92,10 @@ get_header(); ?>
 						</div>
 
 						<aside class="business-single__sidebar">
-							<?php if ( $phone || $fax || $email || $website || $address ) : ?>
+							<?php if ( $phone || $email || $website || $address ) : ?>
 								<h3 class="business-single__section-title">Contact Details</h3>
 								<ul class="business-single__contact">
 									<?php if ( $phone ) : ?><li><?php echo hse_business_icon( 'phone' ); ?><span><?php echo esc_html( $phone ); ?></span></li><?php endif; ?>
-									<?php if ( $fax ) : ?><li><strong>Fax:</strong> <?php echo esc_html( $fax ); ?></li><?php endif; ?>
 									<?php if ( $email ) : ?><li><?php echo hse_business_icon( 'email' ); ?><a href="mailto:<?php echo esc_attr( $email ); ?>"><?php echo esc_html( $email ); ?></a></li><?php endif; ?>
 									<?php if ( $website ) : ?><li><?php echo hse_business_icon( 'website' ); ?><a href="<?php echo esc_url( $website ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $website ); ?></a></li><?php endif; ?>
 									<?php if ( $address ) : ?><li><?php echo hse_business_icon( 'address' ); ?><span><?php echo esc_html( $address ); ?><?php echo $zip ? ', ' . esc_html( $zip ) : ''; ?></span></li><?php endif; ?>

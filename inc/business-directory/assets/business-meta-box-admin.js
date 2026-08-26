@@ -1,11 +1,53 @@
 /**
- * Business Details meta box: multi-image gallery picker using WordPress's
- * own core media library (wp.media), since the ACF Gallery field this
- * replaces requires ACF PRO. Selected attachment IDs are kept in a hidden
- * input, comma-separated, read by meta-box.php's save handler.
+ * Business Details meta box:
+ *  - multi-image gallery picker using WordPress's own core media library
+ *    (wp.media), since the ACF Gallery field this replaces requires ACF
+ *    PRO. Selected attachment IDs are kept in a hidden input,
+ *    comma-separated, read by meta-box.php's save handler.
+ *  - shows/hides tier-gated field groups (Social Media Links, Review,
+ *    Catalog URL) based on the selected Tier radio. This is purely an
+ *    editing-UI restriction -- hidden fields still submit their existing
+ *    values on save, so downgrading the tier doesn't clear anything.
+ *  - a live "Open in a new tab" preview link under the Catalog URL field
+ *    that updates as the field is typed into.
  */
 ( function ( $ ) {
 	'use strict';
+
+	function updateTierVisibility() {
+		var checked = document.querySelector( 'input[name="business_tier"]:checked' );
+		var tier = checked ? checked.value : 'free';
+
+		document.querySelectorAll( '.hse-business-fields__group[data-show-for-tiers]' ).forEach( function ( tbody ) {
+			var tiers = tbody.getAttribute( 'data-show-for-tiers' ).split( ',' );
+			tbody.style.display = tiers.indexOf( tier ) !== -1 ? '' : 'none';
+		} );
+	}
+
+	document.addEventListener( 'change', function ( e ) {
+		if ( 'business_tier' === e.target.name ) {
+			updateTierVisibility();
+		}
+	} );
+
+	updateTierVisibility();
+
+	document.querySelectorAll( '.hse-business-live-preview-input' ).forEach( function ( input ) {
+		var link = document.getElementById( input.getAttribute( 'data-preview-target' ) );
+		if ( ! link ) {
+			return;
+		}
+
+		input.addEventListener( 'input', function () {
+			var value = input.value.trim();
+			if ( value ) {
+				link.href = value;
+				link.style.display = '';
+			} else {
+				link.style.display = 'none';
+			}
+		} );
+	} );
 
 	function refreshHiddenInput( $wrap ) {
 		var ids = $wrap.find( '.hse-business-gallery__item' ).map( function () {

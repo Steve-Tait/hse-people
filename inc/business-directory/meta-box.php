@@ -4,16 +4,22 @@
  * live here. ACF is a free-plugin install with no PRO license on this
  * site, and this was its only field group -- with no repeaters,
  * conditional logic, or other ACF-specific feature actually in use, a
- * plain meta box removes a whole plugin dependency for what's really
- * just eight scalar fields plus an image gallery.
+ * plain meta box removes a whole plugin dependency.
  *
  * Field values are stored as plain post meta under the same keys ACF
  * used for its own simple field types (text/email/oembed store the raw
  * value directly, unprefixed) -- so existing business post data keeps
- * working unchanged. The old `logo`/`cover_image`/`business_tags` ACF
- * fields were already removed/replaced before this file existed, and
- * `business_gallery` never held real data (ACF's Gallery field type
- * requires PRO, so it never actually rendered anything to save).
+ * working unchanged. The old `logo`/`cover_image`/`business_tags`/
+ * `business_fax` ACF fields were already removed, and `business_gallery`
+ * never held real data (ACF's Gallery field type requires PRO, so it
+ * never actually rendered anything to save).
+ *
+ * Fields are gated by the `business_tier` radio (Free/Standard/Premium):
+ * social links need Standard or Premium, the Review group and Catalog
+ * URL need Premium. This is an *editing UI* restriction only (see
+ * assets/business-meta-box-admin.js) -- a lower-tier post that already
+ * has values in a higher-tier field (e.g. after a downgrade) keeps that
+ * data; nothing here clears it.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,11 +27,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Simple scalar fields shown in the meta box. Excludes `business_gallery`,
- * which needs its own multi-image picker UI (see hse_business_gallery_field()).
+ * All fields shown in the meta box except `business_gallery`, which needs
+ * its own multi-image picker UI (see hse_business_gallery_field()).
+ *
+ * `group` clusters fields into one <tbody> (and, for 'social'/'review',
+ * a heading row); `show_for_tiers` gates that tbody's visibility to the
+ * listed business_tier values, toggled by the admin JS. Fields with no
+ * `show_for_tiers` are always shown.
  */
 function hse_business_meta_fields() {
 	return [
+		'business_tier' => [
+			'label'   => 'Tier',
+			'type'    => 'radio',
+			'options' => [
+				'free'     => 'Free',
+				'standard' => 'Standard',
+				'premium'  => 'Premium',
+			],
+			'default' => 'free',
+		],
+
 		'short_business_description' => [
 			'label' => 'Short Business Description',
 			'type'  => 'text',
@@ -36,10 +58,6 @@ function hse_business_meta_fields() {
 		],
 		'business_phone_number'      => [
 			'label' => 'Business Phone Number',
-			'type'  => 'text',
-		],
-		'business_fax'               => [
-			'label' => 'Business Fax',
 			'type'  => 'text',
 		],
 		'business_contact_email'     => [
@@ -54,15 +72,66 @@ function hse_business_meta_fields() {
 			'label' => 'ZIP Code',
 			'type'  => 'text',
 		],
-		'video'                      => [
-			'label'       => 'Review Video',
-			'type'        => 'url',
-			'description' => 'YouTube or Vimeo link.',
-		],
 		'demonstration_video'        => [
 			'label'       => 'Demonstration Video',
 			'type'        => 'url',
 			'description' => 'YouTube or Vimeo link.',
+		],
+
+		'social_facebook'  => [
+			'label'          => 'Facebook',
+			'type'           => 'url',
+			'group'          => 'social',
+			'show_for_tiers' => [ 'standard', 'premium' ],
+		],
+		'social_youtube'   => [
+			'label'          => 'YouTube',
+			'type'           => 'url',
+			'group'          => 'social',
+			'show_for_tiers' => [ 'standard', 'premium' ],
+		],
+		'social_instagram' => [
+			'label'          => 'Instagram',
+			'type'           => 'url',
+			'group'          => 'social',
+			'show_for_tiers' => [ 'standard', 'premium' ],
+		],
+		'social_linkedin'  => [
+			'label'          => 'LinkedIn',
+			'type'           => 'url',
+			'group'          => 'social',
+			'show_for_tiers' => [ 'standard', 'premium' ],
+		],
+		'social_x'         => [
+			'label'          => 'X (Twitter)',
+			'type'           => 'url',
+			'group'          => 'social',
+			'show_for_tiers' => [ 'standard', 'premium' ],
+		],
+
+		'video'         => [
+			'label'          => 'Review Video',
+			'type'           => 'url',
+			'description'    => 'YouTube or Vimeo link.',
+			'group'          => 'review',
+			'show_for_tiers' => [ 'premium' ],
+		],
+		'review_rating' => [
+			'label'          => 'Review Rating',
+			'type'           => 'number',
+			'description'    => 'Out of 100.',
+			'min'            => 0,
+			'max'            => 100,
+			'group'          => 'review',
+			'show_for_tiers' => [ 'premium' ],
+		],
+
+		'catalog_url'   => [
+			'label'          => 'Catalog URL',
+			'type'           => 'url',
+			'group'          => 'catalog',
+			'show_for_tiers' => [ 'premium' ],
+			'live_preview'   => true,
 		],
 	];
 }
@@ -80,36 +149,109 @@ add_action( 'add_meta_boxes', function () {
 
 function hse_business_details_meta_box_render( $post ) {
 	wp_nonce_field( 'hse_business_details_save', 'hse_business_details_nonce' );
+
+	$group_labels = [
+		'social' => __( 'Social Media Links', 'astra' ),
+		'review' => __( 'Review', 'astra' ),
+	];
+
+	$groups = [];
+	foreach ( hse_business_meta_fields() as $name => $field ) {
+		$groups[ $field['group'] ?? '_default' ][ $name ] = $field;
+	}
 	?>
-	<table class="form-table">
+	<table class="form-table hse-business-fields">
+		<?php foreach ( $groups as $group_key => $group_fields ) :
+			$show_for_tiers = reset( $group_fields )['show_for_tiers'] ?? [];
+			?>
+			<tbody<?php echo $show_for_tiers ? ' class="hse-business-fields__group" data-show-for-tiers="' . esc_attr( implode( ',', $show_for_tiers ) ) . '"' : ''; ?>>
+				<?php if ( isset( $group_labels[ $group_key ] ) ) : ?>
+					<tr class="hse-business-fields__group-heading">
+						<th colspan="2"><?php echo esc_html( $group_labels[ $group_key ] ); ?></th>
+					</tr>
+				<?php endif; ?>
+
+				<?php foreach ( $group_fields as $name => $field ) :
+					hse_business_render_field_row( $post, $name, $field );
+				endforeach; ?>
+			</tbody>
+		<?php endforeach; ?>
+
 		<tbody>
-			<?php foreach ( hse_business_meta_fields() as $name => $field ) :
-				$value = get_post_meta( $post->ID, $name, true );
-				?>
-				<tr>
-					<th scope="row">
-						<label for="<?php echo esc_attr( $name ); ?>"><?php echo esc_html( $field['label'] ); ?></label>
-					</th>
-					<td>
-						<input
-							type="<?php echo esc_attr( $field['type'] ); ?>"
-							id="<?php echo esc_attr( $name ); ?>"
-							name="<?php echo esc_attr( $name ); ?>"
-							value="<?php echo 'url' === $field['type'] ? esc_url( $value ) : esc_attr( $value ); ?>"
-							class="widefat"
-						/>
-						<?php if ( ! empty( $field['description'] ) ) : ?>
-							<p class="description"><?php echo esc_html( $field['description'] ); ?></p>
-						<?php endif; ?>
-					</td>
-				</tr>
-			<?php endforeach; ?>
 			<tr>
 				<th scope="row"><?php esc_html_e( 'Business Gallery', 'astra' ); ?></th>
 				<td><?php hse_business_gallery_field( $post ); ?></td>
 			</tr>
 		</tbody>
 	</table>
+	<?php
+}
+
+function hse_business_render_field_row( $post, $name, $field ) {
+	$value = get_post_meta( $post->ID, $name, true );
+	if ( '' === $value && isset( $field['default'] ) ) {
+		$value = $field['default'];
+	}
+	?>
+	<tr>
+		<th scope="row">
+			<?php if ( 'radio' === $field['type'] ) : ?>
+				<?php echo esc_html( $field['label'] ); ?>
+			<?php else : ?>
+				<label for="<?php echo esc_attr( $name ); ?>"><?php echo esc_html( $field['label'] ); ?></label>
+			<?php endif; ?>
+		</th>
+		<td>
+			<?php if ( 'radio' === $field['type'] ) : ?>
+				<?php foreach ( $field['options'] as $option_value => $option_label ) : ?>
+					<label class="hse-business-radio-option">
+						<input
+							type="radio"
+							name="<?php echo esc_attr( $name ); ?>"
+							value="<?php echo esc_attr( $option_value ); ?>"
+							<?php checked( $value, $option_value ); ?>
+						/>
+						<?php echo esc_html( $option_label ); ?>
+					</label>
+				<?php endforeach; ?>
+			<?php elseif ( 'number' === $field['type'] ) : ?>
+				<input
+					type="number"
+					id="<?php echo esc_attr( $name ); ?>"
+					name="<?php echo esc_attr( $name ); ?>"
+					value="<?php echo esc_attr( $value ); ?>"
+					<?php if ( isset( $field['min'] ) ) : ?>min="<?php echo esc_attr( $field['min'] ); ?>"<?php endif; ?>
+					<?php if ( isset( $field['max'] ) ) : ?>max="<?php echo esc_attr( $field['max'] ); ?>"<?php endif; ?>
+					class="small-text"
+				/>
+			<?php else : ?>
+				<input
+					type="<?php echo esc_attr( $field['type'] ); ?>"
+					id="<?php echo esc_attr( $name ); ?>"
+					name="<?php echo esc_attr( $name ); ?>"
+					value="<?php echo 'url' === $field['type'] ? esc_url( $value ) : esc_attr( $value ); ?>"
+					class="widefat<?php echo ! empty( $field['live_preview'] ) ? ' hse-business-live-preview-input' : ''; ?>"
+					<?php echo ! empty( $field['live_preview'] ) ? 'data-preview-target="' . esc_attr( $name ) . '-preview"' : ''; ?>
+				/>
+				<?php if ( ! empty( $field['live_preview'] ) ) : ?>
+					<p>
+						<a
+							href="<?php echo esc_url( $value ); ?>"
+							target="_blank"
+							rel="noopener"
+							id="<?php echo esc_attr( $name ); ?>-preview"
+							class="hse-business-live-preview-link"
+							<?php echo $value ? '' : 'style="display:none;"'; ?>
+						><?php esc_html_e( 'Open in a new tab', 'astra' ); ?> &#8599;</a>
+					</p>
+				<?php endif; ?>
+			<?php endif; ?>
+
+			<?php if ( ! empty( $field['description'] ) ) : ?>
+				<p class="description"><?php echo esc_html( $field['description'] ); ?></p>
+			<?php endif; ?>
+		</td>
+	</tr>
 	<?php
 }
 
@@ -153,6 +295,15 @@ add_action( 'save_post_business', function ( $post_id ) {
 	}
 
 	foreach ( hse_business_meta_fields() as $name => $field ) {
+
+		if ( 'radio' === $field['type'] ) {
+			$allowed = array_keys( $field['options'] );
+			$raw     = isset( $_POST[ $name ] ) ? wp_unslash( $_POST[ $name ] ) : '';
+			$value   = in_array( $raw, $allowed, true ) ? $raw : ( $field['default'] ?? $allowed[0] );
+			update_post_meta( $post_id, $name, $value );
+			continue;
+		}
+
 		if ( ! isset( $_POST[ $name ] ) ) {
 			continue;
 		}
@@ -163,6 +314,8 @@ add_action( 'save_post_business', function ( $post_id ) {
 			$value = sanitize_email( $raw );
 		} elseif ( 'url' === $field['type'] ) {
 			$value = esc_url_raw( $raw );
+		} elseif ( 'number' === $field['type'] ) {
+			$value = '' === trim( $raw ) ? '' : (string) max( $field['min'] ?? 0, min( $field['max'] ?? PHP_INT_MAX, absint( $raw ) ) );
 		} else {
 			$value = sanitize_text_field( $raw );
 		}

@@ -1,3 +1,23 @@
+.hse-business-fields__group-heading th {
+	padding-bottom: 0;
+	font-size: 1em;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	color: #555;
+}
+
+.hse-business-radio-option {
+	margin-right: 1.5em;
+	font-weight: 400;
+}
+
+.hse-business-live-preview-link {
+	display: inline-block;
+	margin-top: 0.4em;
+	font-size: 0.9em;
+	text-decoration: none;
+}
+
 .hse-business-gallery__items {
 	display: flex;
 	flex-wrap: wrap;
