@@ -507,7 +507,6 @@
 .business-single__body {
 	display: grid;
 	grid-template-columns: 2fr 1fr;
-	align-items: start;
 	gap: 2.5em;
 	margin-top: 1.5em;
 }
@@ -531,13 +530,6 @@
 @media (max-width: 782px) {
 	.business-single__body {
 		grid-template-columns: 1fr;
-	}
-
-	/* Sticky only makes sense once the sidebar sits alongside the main
-	 * column -- on the single-column mobile layout it's stacked after
-	 * everything else, so there's nothing useful for it to stick to. */
-	.business-single__sidebar {
-		position: static;
 	}
 }
 
@@ -570,18 +562,6 @@
 	max-width: 100%;
 	aspect-ratio: 16 / 9;
 	height: auto;
-}
-
-.business-single__sidebar {
-	/* Background/border/padding come from the shared .business-single__panel
-	 * class (see above) -- this now just adds the sticky behaviour. Sticks
-	 * within .business-single__body, so it stops at that container's own
-	 * bottom edge rather than floating past the end of the shorter column.
-	 * The top offset assumes the site header isn't sticky-tall on desktop;
-	 * nudge it if the sidebar tucks under the header before settling. */
-	position: sticky;
-	top: 20px;
-	align-self: start;
 }
 
 .business-single__contact {

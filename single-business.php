@@ -7,6 +7,22 @@
  * the site's normal header/footer/width, with a custom loop in between.
  */
 
+// Astra's own `astra_single_post_class()` (inc/blog/single-blog.php) adds
+// `ast-article-single` to every singular post_class() output. That class
+// carries a large block of Astra's own dynamic "Separate Containers" CSS
+// (background/padding/margin, scoped under .ast-separate-container) meant
+// for its default single-post layout, which conflicts with this template's
+// own panel styling. Rather than fight that generated CSS property by
+// property, this just removes the class for the business post type --
+// Astra's own filter runs at the default priority (10), so this needs to
+// run after it.
+add_filter( 'post_class', function ( $classes ) {
+	if ( 'business' === get_post_type() ) {
+		$classes = array_diff( $classes, [ 'ast-article-single' ] );
+	}
+	return $classes;
+}, 20 );
+
 get_header(); ?>
 
 <?php if ( astra_page_layout() === 'left-sidebar' ) : ?>
