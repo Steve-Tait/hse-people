@@ -10,6 +10,13 @@
  *    values on save, so downgrading the tier doesn't clear anything.
  *  - a live "Open in a new tab" preview link under the Catalog URL field
  *    that updates as the field is typed into.
+ *
+ * Also used, unmodified, on the business_genre term-edit screen (see
+ * inc/business-directory/genre-meta.php) -- the gallery picker there is
+ * the Category Banner Images field, plus a single-image variant below
+ * for the Results Grid Promo Image field. Everything here is purely
+ * class-based with no post-specific assumptions, so the same file works
+ * on both screens.
  */
 ( function ( $ ) {
 	'use strict';
@@ -98,5 +105,39 @@
 		var $wrap = $( this ).closest( '.hse-business-gallery' );
 		$( this ).closest( '.hse-business-gallery__item' ).remove();
 		refreshHiddenInput( $wrap );
+	} );
+
+	$( document ).on( 'click', '.hse-single-image-picker__select', function ( e ) {
+		e.preventDefault();
+
+		var $wrap = $( this ).closest( '.hse-single-image-picker' );
+
+		var frame = wp.media( {
+			title: 'Select Image',
+			button: { text: 'Use this image' },
+			multiple: false,
+		} );
+
+		frame.on( 'select', function () {
+			var attachment = frame.state().get( 'selection' ).first().toJSON();
+			var thumbUrl = ( attachment.sizes && attachment.sizes.medium )
+				? attachment.sizes.medium.url
+				: attachment.url;
+
+			$wrap.find( '.hse-single-image-picker__input' ).val( attachment.id );
+			$wrap.find( '.hse-single-image-picker__preview' ).html( '<img src="' + thumbUrl + '" alt="">' );
+			$wrap.find( '.hse-single-image-picker__remove' ).show();
+		} );
+
+		frame.open();
+	} );
+
+	$( document ).on( 'click', '.hse-single-image-picker__remove', function ( e ) {
+		e.preventDefault();
+
+		var $wrap = $( this ).closest( '.hse-single-image-picker' );
+		$wrap.find( '.hse-single-image-picker__input' ).val( '' );
+		$wrap.find( '.hse-single-image-picker__preview' ).empty();
+		$( this ).hide();
 	} );
 } )( jQuery );

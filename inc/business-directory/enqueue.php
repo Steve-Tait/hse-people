@@ -24,4 +24,14 @@ add_action( 'wp_enqueue_scripts', function () {
 			true
 		);
 	}
+
+	if ( is_page_template( 'page-templates/page-business-directory.php' ) ) {
+		wp_enqueue_script(
+			'business-directory-banner-slider',
+			get_template_directory_uri() . '/inc/business-directory/assets/business-directory-banner-slider.js',
+			[],
+			defined( 'ASTRA_THEME_VERSION' ) ? ASTRA_THEME_VERSION : false,
+			true
+		);
+	}
 } );

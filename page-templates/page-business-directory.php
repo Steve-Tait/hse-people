@@ -17,6 +17,18 @@ $locked_genre_slug = get_query_var( 'business_genre' );
 $locked_genre_term = $locked_genre_slug ? get_term_by( 'slug', $locked_genre_slug, 'business_genre' ) : false;
 // An unrecognised category slug just falls back to the normal, unfiltered view.
 
+// Both are set per-term via the "Category Banner Images" / "Results Grid
+// Promo Image" fields on the business_genre edit screen (see
+// inc/business-directory/genre-meta.php), so only apply on a locked
+// category page -- there's no single relevant term otherwise.
+$banner_image_ids    = [];
+$grid_promo_image_id = 0;
+if ( $locked_genre_term ) {
+	$banner_image_ids = get_term_meta( $locked_genre_term->term_id, 'banner_images', true );
+	$banner_image_ids = is_array( $banner_image_ids ) ? array_map( 'absint', $banner_image_ids ) : [];
+	$grid_promo_image_id = absint( get_term_meta( $locked_genre_term->term_id, 'grid_promo_image', true ) );
+}
+
 get_header(); ?>
 
 <?php if ( astra_page_layout() === 'left-sidebar' ) : ?>
@@ -28,6 +40,20 @@ get_header(); ?>
 
 		<main id="main" class="site-main">
 			<div class="business-directory-container">
+
+				<?php if ( ! empty( $banner_image_ids ) ) : ?>
+					<div class="business-directory__banner-slider" data-banner-slider>
+						<div class="business-directory__banner-track">
+							<?php foreach ( $banner_image_ids as $banner_image_id ) :
+								echo wp_get_attachment_image( $banner_image_id, 'large', false, [ 'class' => 'business-directory__banner-slide' ] );
+							endforeach; ?>
+						</div>
+						<?php if ( count( $banner_image_ids ) > 1 ) : ?>
+							<button type="button" class="business-directory__banner-nav business-directory__banner-nav--prev" aria-label="<?php esc_attr_e( 'Previous', 'astra' ); ?>">&#8249;</button>
+							<button type="button" class="business-directory__banner-nav business-directory__banner-nav--next" aria-label="<?php esc_attr_e( 'Next', 'astra' ); ?>">&#8250;</button>
+						<?php endif; ?>
+					</div>
+				<?php endif; ?>
 
 				<?php while ( have_posts() ) : the_post(); ?>
 					<div class="business-directory__intro">
@@ -107,15 +133,23 @@ get_header(); ?>
 				$directory_query = new WP_Query( $query_args );
 				?>
 
-				<div class="facetwp-template">
-					<?php if ( $directory_query->have_posts() ) : ?>
-						<div class="business-directory-grid">
-							<?php while ( $directory_query->have_posts() ) : $directory_query->the_post();
-								get_template_part( 'template-parts/business/card' );
-							endwhile; ?>
+				<div class="business-directory-results">
+					<div class="facetwp-template">
+						<?php if ( $directory_query->have_posts() ) : ?>
+							<div class="business-directory-grid">
+								<?php while ( $directory_query->have_posts() ) : $directory_query->the_post();
+									get_template_part( 'template-parts/business/card' );
+								endwhile; ?>
+							</div>
+						<?php else : ?>
+							<p><?php esc_html_e( 'No suppliers match your search.', 'astra' ); ?></p>
+						<?php endif; ?>
+					</div>
+
+					<?php if ( $grid_promo_image_id ) : ?>
+						<div class="business-directory-grid__promo">
+							<?php echo wp_get_attachment_image( $grid_promo_image_id, 'medium' ); ?>
 						</div>
-					<?php else : ?>
-						<p><?php esc_html_e( 'No suppliers match your search.', 'astra' ); ?></p>
 					<?php endif; ?>
 				</div>
 

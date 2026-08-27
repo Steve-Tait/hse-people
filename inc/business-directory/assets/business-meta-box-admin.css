@@ -55,3 +55,15 @@
 	cursor: pointer;
 	font-size: 14px;
 }
+
+.hse-single-image-picker__preview {
+	margin-bottom: 10px;
+}
+
+.hse-single-image-picker__preview img {
+	display: block;
+	max-width: 300px;
+	height: auto;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+}

@@ -6,6 +6,69 @@
 	padding: 2.5em 1.5em 3em;
 }
 
+/* Category banner slider -- shown above the heading only on a locked
+ * category page (/business-directory/category/{slug}/) when that
+ * business_genre term has banner_images set (see genre-meta.php). Plain
+ * horizontal scroll-snap strip with click-to-advance buttons -- no
+ * autoplay, no external carousel library. */
+
+.business-directory__banner-slider {
+	position: relative;
+	margin: 0 0 2em;
+}
+
+.business-directory__banner-track {
+	display: flex;
+	gap: 12px;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	scroll-behavior: smooth;
+	border-radius: 8px;
+	-webkit-overflow-scrolling: touch;
+}
+
+.business-directory__banner-track::-webkit-scrollbar {
+	display: none;
+}
+
+.business-directory__banner-slide {
+	flex: 0 0 100%;
+	scroll-snap-align: start;
+	width: 100%;
+	height: auto;
+	max-height: 320px;
+	object-fit: cover;
+	border-radius: 8px;
+}
+
+.business-directory__banner-nav {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 36px;
+	height: 36px;
+	border: none;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.9);
+	color: #333;
+	font-size: 1.4em;
+	line-height: 1;
+	cursor: pointer;
+	box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+}
+
+.business-directory__banner-nav--prev {
+	left: 10px;
+}
+
+.business-directory__banner-nav--next {
+	right: 10px;
+}
+
+.business-directory__banner-nav:hover {
+	background: #fff;
+}
+
 .business-directory__intro {
 	text-align: center;
 	max-width: 700px;
@@ -71,6 +134,50 @@
 	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
 	gap: 1.5em;
 	margin: 1.5em 0;
+}
+
+/* Results grid promo image (page-business-directory.php only): reserves
+ * a whole column for a single sticky image rather than interleaving it
+ * into the card grid, so no result tile can ever land in that column --
+ * the grid and the image are separate flex siblings, not one grid with
+ * skipped cells. */
+
+.business-directory-results {
+	display: flex;
+	align-items: flex-start;
+	gap: 1.5em;
+	margin: 1.5em 0;
+}
+
+.business-directory-results .business-directory-grid {
+	flex: 1 1 auto;
+	min-width: 0;
+	margin: 0;
+}
+
+.business-directory-grid__promo {
+	flex: 0 0 260px;
+	position: sticky;
+	top: 20px;
+}
+
+.business-directory-grid__promo img {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: 8px;
+}
+
+@media (max-width: 900px) {
+	.business-directory-results {
+		flex-direction: column;
+	}
+
+	.business-directory-grid__promo {
+		position: static;
+		flex-basis: auto;
+		width: 100%;
+	}
 }
 
 .business-card {
