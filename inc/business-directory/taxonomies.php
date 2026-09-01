@@ -1,11 +1,17 @@
 <?php
 /**
- * Business directory taxonomies: Badges, Tags, and Location.
+ * Business directory taxonomies: Accreditations, Tags, and Location.
  *
  * `business_genre` (the category-equivalent) remains managed via CPT UI's
  * admin screens, matching the site's pre-existing convention for that
  * taxonomy. These are new additions for the supplier directory feature
  * and are registered in code so they're version-controlled.
+ *
+ * `business_accreditation` was originally registered as `business_badge`
+ * ("Business Badges") -- renamed here in code, with a migration
+ * (migrations/2026-09-01-business-accreditation-rename.php) renaming the
+ * matching `wp_term_taxonomy.taxonomy` rows for existing terms so they
+ * keep resolving under the new name.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,11 +20,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 add_action( 'init', function () {
 
-	register_taxonomy( 'business_badge', [ 'business' ], [
-		'label'             => 'Business Badges',
+	register_taxonomy( 'business_accreditation', [ 'business' ], [
+		'label'             => 'Accreditations',
 		'labels'            => [
-			'name'          => 'Business Badges',
-			'singular_name' => 'Business Badge',
+			'name'          => 'Accreditations',
+			'singular_name' => 'Accreditation',
 		],
 		'public'            => true,
 		'publicly_queryable' => true,

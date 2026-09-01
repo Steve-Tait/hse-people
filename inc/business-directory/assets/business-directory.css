@@ -220,12 +220,12 @@
 	font-size: 1.1em;
 }
 
-.business-card__badges,
-.business-single__badges {
+.business-card__accreditations,
+.business-single__accreditations {
 	margin: 0 0 0.6em;
 }
 
-.business-badge {
+.business-accreditation {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.35em;
@@ -233,14 +233,14 @@
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.02em;
-	background: color-mix(in srgb, var(--badge-color, #555) 12%, #fff);
-	color: var(--badge-color, #555);
+	background: color-mix(in srgb, var(--accreditation-color, #555) 12%, #fff);
+	color: var(--accreditation-color, #555);
 	border-radius: 3px;
 	padding: 0.3em 0.7em;
 	margin: 0 0.3em 0.3em 0;
 }
 
-.business-badge .hse-icon {
+.business-accreditation .hse-icon {
 	width: 12px;
 	height: 12px;
 	flex: none;

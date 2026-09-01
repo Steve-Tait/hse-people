@@ -44,12 +44,12 @@ get_header(); ?>
 				$gallery_ids = get_post_meta( $post_id, 'business_gallery', true );
 				$gallery_ids = is_array( $gallery_ids ) ? $gallery_ids : [];
 				$demo_url    = get_post_meta( $post_id, 'demonstration_video', true );
-				$genres      = get_the_terms( get_the_ID(), 'business_genre' );
-				$tags        = get_the_terms( get_the_ID(), 'business_tag' );
-				$badges      = get_the_terms( get_the_ID(), 'business_badge' );
-				$genres      = is_array( $genres ) ? $genres : [];
-				$tags        = is_array( $tags ) ? $tags : [];
-				$badges      = is_array( $badges ) ? $badges : [];
+				$genres         = get_the_terms( get_the_ID(), 'business_genre' );
+				$tags           = get_the_terms( get_the_ID(), 'business_tag' );
+				$accreditations = get_the_terms( get_the_ID(), 'business_accreditation' );
+				$genres         = is_array( $genres ) ? $genres : [];
+				$tags           = is_array( $tags ) ? $tags : [];
+				$accreditations = is_array( $accreditations ) ? $accreditations : [];
 
 				// Tier gates which fields render, not which fields save --
 				// a downgraded business keeps its Standard/Premium data in
@@ -95,9 +95,12 @@ get_header(); ?>
 
 									<h1 class="business-single__title"><?php the_title(); ?></h1>
 
-									<?php if ( ! empty( $badges ) ) : ?>
-										<p class="business-single__badges">
-											<?php hse_business_render_badges( $badges ); ?>
+									<?php if ( is_sticky( $post_id ) || ! empty( $accreditations ) ) : ?>
+										<p class="business-single__accreditations">
+											<?php
+											hse_business_render_featured_badge( $post_id );
+											hse_business_render_accreditations( $accreditations );
+											?>
 										</p>
 									<?php endif; ?>
 								</div>

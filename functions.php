@@ -223,6 +223,7 @@ require_once ASTRA_THEME_DIR . 'inc/business-directory/helpers.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/taxonomies.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/meta-box.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/genre-meta.php';
+require_once ASTRA_THEME_DIR . 'inc/business-directory/featured.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/facetwp-facets.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/enqueue.php';
 require_once ASTRA_THEME_DIR . 'inc/business-directory/rewrite.php';

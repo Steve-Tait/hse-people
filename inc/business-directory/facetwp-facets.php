@@ -16,12 +16,12 @@ add_filter( 'facetwp_facets', function ( $facets ) {
 
 	$names = wp_list_pluck( $facets, 'name' );
 
-	if ( ! in_array( 'business_badge', $names, true ) ) {
+	if ( ! in_array( 'business_accreditation', $names, true ) ) {
 		$facets[] = [
-			'name'            => 'business_badge',
-			'label'           => 'Badges',
+			'name'            => 'business_accreditation',
+			'label'           => 'Accreditations',
 			'type'            => 'checkboxes',
-			'source'          => 'tax/business_badge',
+			'source'          => 'tax/business_accreditation',
 			'parent_term'     => '',
 			'modifier_type'   => 'off',
 			'modifier_values' => '',
@@ -30,16 +30,16 @@ add_filter( 'facetwp_facets', function ( $facets ) {
 			'count'           => '10',
 			'source_other'    => '',
 			'show_expanded'   => 'no',
-			// 'yes': badges that would no longer match (0 results) once a
-			// filter is applied stay visible but disabled/greyed out,
-			// instead of disappearing -- so the full list is always there
-			// to filter further, not just whatever's left after the first
-			// selection.
+			// 'yes': accreditations that would no longer match (0 results)
+			// once a filter is applied stay visible but disabled/greyed
+			// out, instead of disappearing -- so the full list is always
+			// there to filter further, not just whatever's left after the
+			// first selection.
 			'ghosts'          => 'yes',
 			'preserve_ghosts' => 'no',
-			// 'or': a business matching ANY selected badge is included.
-			// 'and' (FacetWP's default) required matching ALL of them,
-			// which meant selecting two badges usually matched nothing.
+			// 'or': a business matching ANY selected accreditation is
+			// included. 'and' (FacetWP's default) required matching ALL
+			// of them, which meant selecting two usually matched nothing.
 			'operator'        => 'or',
 			// Rendered inside a scrollable dropdown panel (see
 			// template-parts/business/facet-dropdown.php), so all options

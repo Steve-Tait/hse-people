@@ -1,7 +1,8 @@
 <?php
 /**
- * Shared icon and badge-rendering helpers for the Business/Supplier
- * directory, used by both single-business.php and the card partial.
+ * Shared icon and accreditation-pill-rendering helpers for the
+ * Business/Supplier directory, used by both single-business.php and the
+ * card partial.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -54,12 +55,14 @@ function hse_business_social_icon( $network ) {
 }
 
 /**
- * Icon + colour per badge slug. New badge terms fall back to a plain tag
- * icon in the default badge colour rather than failing to render.
+ * Icon + colour per accreditation slug. New accreditation terms fall back
+ * to a plain tag icon in the default colour rather than failing to
+ * render. 'featured' isn't handled here -- Featured is a checkbox on the
+ * business post itself (see inc/business-directory/featured.php), not an
+ * accreditation term.
  */
-function hse_business_badge_meta( $slug ) {
+function hse_business_accreditation_meta( $slug ) {
 	$map = [
-		'featured' => [ 'icon' => 'star', 'color' => '#b8860b' ],
 		'verified' => [ 'icon' => 'check-circle', 'color' => '#2e7d32' ],
 		'bsif-affiliate-member' => [ 'icon' => 'shield-check', 'color' => '#044f8d' ],
 		'bsif-rsss-member' => [ 'icon' => 'shield-check', 'color' => '#0f6674' ],
@@ -70,19 +73,38 @@ function hse_business_badge_meta( $slug ) {
 }
 
 /**
- * Renders a list of business_badge term objects as coloured, icon-led pills.
+ * Renders a list of business_accreditation term objects as coloured,
+ * icon-led pills.
  */
-function hse_business_render_badges( $badges ) {
-	if ( empty( $badges ) ) {
+function hse_business_render_accreditations( $accreditations ) {
+	if ( empty( $accreditations ) ) {
 		return;
 	}
-	foreach ( $badges as $badge ) {
-		$meta = hse_business_badge_meta( $badge->slug );
+	foreach ( $accreditations as $accreditation ) {
+		$meta = hse_business_accreditation_meta( $accreditation->slug );
 		printf(
-			'<span class="business-badge" style="--badge-color:%1$s;">%2$s%3$s</span>',
+			'<span class="business-accreditation" style="--accreditation-color:%1$s;">%2$s%3$s</span>',
 			esc_attr( $meta['color'] ),
 			hse_business_icon( $meta['icon'] ),
-			esc_html( $badge->name )
+			esc_html( $accreditation->name )
 		);
 	}
+}
+
+/**
+ * Renders the same pill style as an accreditation, for a business marked
+ * Featured (see inc/business-directory/featured.php) -- shown first,
+ * ahead of any real accreditation pills, when is_sticky() is true for
+ * this post.
+ */
+function hse_business_render_featured_badge( $post_id ) {
+	if ( ! is_sticky( $post_id ) ) {
+		return;
+	}
+	printf(
+		'<span class="business-accreditation" style="--accreditation-color:%1$s;">%2$s%3$s</span>',
+		esc_attr( '#b8860b' ),
+		hse_business_icon( 'star' ),
+		esc_html__( 'Featured', 'astra' )
+	);
 }
