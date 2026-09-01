@@ -13,7 +13,7 @@
  * This script only handles what's fundamentally WordPress content/data,
  * not code:
  *
- *   - seeding the business_badge terms
+ *   - seeding the business_accreditation terms
  *   - clearing out the placeholder/test business posts, so real supplier
  *     content entry starts from a clean slate
  *   - removing the Elementor Theme Builder templates this feature used to
@@ -46,17 +46,26 @@ function bdf_log( $msg ) {
 }
 
 // ---------------------------------------------------------------------
-// 1. Seed business_badge terms (content, not code).
+// 1. Seed business_accreditation terms (content, not code).
+//
+// Originally seeded under `business_badge` (including a 'Featured'
+// term); that taxonomy was renamed to `business_accreditation` and
+// 'Featured' became a post checkbox instead of a term (see
+// migrations/2026-09-01-business-accreditation-rename.php, which only
+// has renaming/removal work to do on an environment that already ran
+// THIS migration under the old name -- a fresh environment just seeds
+// the right terms directly here). 'Accredited' was added by hand during
+// local testing and never captured in a migration until now.
 // ---------------------------------------------------------------------
 function bdf_seed_badge_terms() {
-	if ( ! taxonomy_exists( 'business_badge' ) ) {
-		bdf_log( 'WARNING: business_badge taxonomy not registered -- deploy the theme code first.' );
+	if ( ! taxonomy_exists( 'business_accreditation' ) ) {
+		bdf_log( 'WARNING: business_accreditation taxonomy not registered -- deploy the theme code first.' );
 		return;
 	}
-	foreach ( [ 'Featured', 'Verified', 'BSIF Affiliate Member', 'BSIF RSSS Member' ] as $term ) {
-		if ( ! term_exists( $term, 'business_badge' ) ) {
-			wp_insert_term( $term, 'business_badge' );
-			bdf_log( "Created business_badge term: $term" );
+	foreach ( [ 'Verified', 'BSIF Affiliate Member', 'BSIF RSSS Member', 'Accredited' ] as $term ) {
+		if ( ! term_exists( $term, 'business_accreditation' ) ) {
+			wp_insert_term( $term, 'business_accreditation' );
+			bdf_log( "Created business_accreditation term: $term" );
 		}
 	}
 }
