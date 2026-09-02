@@ -5,14 +5,14 @@
  * Recruitment Agencies, ...) inherited from the site's original build.
  * The new set is PPE product-TYPE categories instead, per direct request.
  *
- * Of the 8 demo businesses, only two actually sell PPE products and
- * genuinely fit the new scheme -- reassigned below. The other six
- * (recruitment, training, software, consultancy, a membership body) are
- * professional-services businesses with no honest fit in a PPE-product
- * category list, so they're left uncategorised here rather than forced
- * into a category that doesn't describe them. They'll need either real
- * categories added by hand, or the category list revisited, once real
- * (non-PPE-product) suppliers are on the site.
+ * All 8 demo businesses get cleared on go-live, so exact semantic fit
+ * doesn't matter here -- assignments below favour demonstrating the
+ * multi-category behaviour (several businesses get 2+ categories, e.g.
+ * Apex Safety Solutions is Head Protection + Eye Protection +
+ * Respiratory Protection, all at once) over strict accuracy. Two
+ * businesses (CloudSafety Software, Elite HSE Recruitment) are left
+ * uncategorised on purpose, so the "no category" state has real
+ * coverage too.
  *
  * `business_genre` remains DB-managed via CPT UI (the site's pre-existing
  * convention for this taxonomy, unlike business_accreditation/location
@@ -85,11 +85,15 @@ foreach ( $new_terms as $name ) {
 }
 WP_CLI::log( $created ? "Created $created new categor(y/ies)." : 'All new categories already exist.' );
 
-// The only two demo businesses that genuinely sell PPE products, so the
-// only two that honestly fit the new scheme.
 $assignments = [
 	47972 => [ 'Head Protection', 'Eye Protection', 'Respiratory Protection' ], // Apex Safety Solutions
-	47975 => [ 'Protective Clothing', 'Hi-Vis Clothing' ], // ProTech PPE Supplies
+	47975 => [ 'Protective Clothing', 'Hi-Vis Clothing', 'Hand Protection', 'Foot Protection' ], // ProTech PPE Supplies (broad-line PPE distributor)
+	47974 => [ 'Face Fit Testing', 'Respiratory Protection' ], // SafeWork Training Academy (trains/certifies on these)
+	47973 => [ 'Fall Protection', 'Protective Clothing' ], // Guardian Compliance Consultants (audits cover these)
+	47978 => [ 'Hand Protection', 'Marine / Water Safety' ], // Independent HSE Advisors
+	47979 => [ 'Hearing Protection', 'FR / Arc Flash / AS Clothing' ], // National Safety Federation
+	// 47977 (CloudSafety Software) and 47976 (Elite HSE Recruitment) are
+	// left with no category, on purpose -- see file docblock.
 ];
 
 $assigned = 0;
