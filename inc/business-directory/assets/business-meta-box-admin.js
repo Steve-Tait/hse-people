@@ -21,6 +21,27 @@
 ( function ( $ ) {
 	'use strict';
 
+	// business_accreditation is hierarchical (accreditation schemes
+	// grouped under their issuing body); a business should only ever be
+	// tagged with a specific scheme, never the issuing-body group itself
+	// (see taxonomies.php, which also enforces this server-side as the
+	// real guard -- this is just so unchecking one silently reverting on
+	// save doesn't look broken). WordPress's own checkbox meta box
+	// (#business_accreditationchecklist) puts top-level terms as direct
+	// <li> children of the list and nested ones inside a `.children` <ul>,
+	// so this only reaches the top-level checkboxes. No-ops entirely on
+	// screens without that element (e.g. the term-edit screen).
+	document.querySelectorAll( '#business_accreditationchecklist > li > label' ).forEach( function ( label ) {
+		var checkbox = label.querySelector( 'input[type="checkbox"]' );
+		if ( ! checkbox ) {
+			return;
+		}
+		checkbox.disabled = true;
+		checkbox.checked = false;
+		label.classList.add( 'hse-accreditation-parent' );
+		label.title = 'This is an issuing body, not an accreditation itself -- select one of the specific schemes underneath it instead.';
+	} );
+
 	function updateTierVisibility() {
 		var checked = document.querySelector( 'input[name="business_tier"]:checked' );
 		var tier = checked ? checked.value : 'free';

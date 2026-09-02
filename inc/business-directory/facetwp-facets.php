@@ -25,11 +25,20 @@ add_filter( 'facetwp_facets', function ( $facets ) {
 			'parent_term'     => '',
 			'modifier_type'   => 'off',
 			'modifier_values' => '',
-			'hierarchical'    => 'no',
+			// The taxonomy itself is hierarchical (accreditation schemes
+			// grouped under their issuing body); this makes the dropdown
+			// render children indented under their parent, using the same
+			// tri-state parent checkbox logic already built for Location
+			// (business-directory-facet-dropdown.js is generic, not
+			// Location-specific). Businesses can never actually be tagged
+			// with a parent term themselves (see taxonomies.php), but
+			// filtering by the parent to match "any child of this issuing
+			// body" is still exactly what's wanted here.
+			'hierarchical'    => 'yes',
 			'orderby'         => 'count',
 			'count'           => '10',
 			'source_other'    => '',
-			'show_expanded'   => 'no',
+			'show_expanded'   => 'yes',
 			// 'yes': accreditations that would no longer match (0 results)
 			// once a filter is applied stay visible but disabled/greyed
 			// out, instead of disappearing -- so the full list is always

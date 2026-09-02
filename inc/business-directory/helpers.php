@@ -55,21 +55,30 @@ function hse_business_social_icon( $network ) {
 }
 
 /**
- * Icon + colour per accreditation slug. New accreditation terms fall back
- * to a plain tag icon in the default colour rather than failing to
- * render. 'featured' isn't handled here -- Featured is a checkbox on the
- * business post itself (see inc/business-directory/featured.php), not an
- * accreditation term.
+ * Icon + colour per accreditation, keyed by the *parent* term (the
+ * issuing body, e.g. BSiF or US PPE) rather than each individual child
+ * scheme -- business_accreditation is hierarchical and a business is
+ * only ever tagged with a child (see taxonomies.php), so deriving from
+ * the parent means one rule per issuing body instead of one per scheme.
+ * An unrecognised parent (or a genuinely top-level term, which shouldn't
+ * occur on a business but is handled rather than erroring) falls back to
+ * a plain tag icon in the default colour.
  */
-function hse_business_accreditation_meta( $slug ) {
+function hse_business_accreditation_meta( $term ) {
 	$map = [
-		'verified' => [ 'icon' => 'check-circle', 'color' => '#2e7d32' ],
-		'bsif-affiliate-member' => [ 'icon' => 'shield-check', 'color' => '#044f8d' ],
-		'bsif-rsss-member' => [ 'icon' => 'shield-check', 'color' => '#0f6674' ],
-		'accredited' => [ 'icon' => 'award', 'color' => '#6a4c93' ],
+		'bsif'   => [ 'icon' => 'shield-check', 'color' => '#044f8d' ],
+		'us-ppe' => [ 'icon' => 'award', 'color' => '#6a4c93' ],
 	];
 
-	return $map[ $slug ] ?? [ 'icon' => 'tag', 'color' => '#555555' ];
+	$parent_slug = $term->slug;
+	if ( $term->parent ) {
+		$parent = get_term( $term->parent, 'business_accreditation' );
+		if ( $parent && ! is_wp_error( $parent ) ) {
+			$parent_slug = $parent->slug;
+		}
+	}
+
+	return $map[ $parent_slug ] ?? [ 'icon' => 'tag', 'color' => '#555555' ];
 }
 
 /**
@@ -81,7 +90,7 @@ function hse_business_render_accreditations( $accreditations ) {
 		return;
 	}
 	foreach ( $accreditations as $accreditation ) {
-		$meta = hse_business_accreditation_meta( $accreditation->slug );
+		$meta = hse_business_accreditation_meta( $accreditation );
 		printf(
 			'<span class="business-accreditation" style="--accreditation-color:%1$s;">%2$s%3$s</span>',
 			esc_attr( $meta['color'] ),
