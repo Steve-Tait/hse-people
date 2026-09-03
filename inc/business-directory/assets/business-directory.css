@@ -143,24 +143,28 @@
 }
 
 /* Results grid promo image (page-business-directory.php only): pinned to
- * the grid's own last column, spanning every row, instead of a
- * fixed-width sidebar next to it -- so it's genuinely the same width as
- * a real card column, growing/shrinking with the grid exactly like one
- * would, rather than staying a static 260px while the cards around it
- * grow. `.facetwp-template`/`.business-directory-grid` go `display:
- * contents` here so the actual card elements become direct items of
- * *this* grid rather than of a nested grid inside a flex sibling --
- * scoped to inside `.business-directory-results` only, since both
- * classes are also used with their own real box elsewhere (e.g.
- * taxonomy-business_genre.php).
+ * the grid's own last column instead of a fixed-width sidebar next to
+ * it, so it's genuinely the same width as a real card column and grows
+ * with it. `.facetwp-template` goes `display: contents` here so its
+ * child (the card grid, or the no-results message) becomes a direct
+ * item of *this* grid rather than being boxed inside a flex/shrunk
+ * wrapper -- scoped to inside `.business-directory-results` only, since
+ * it's also used with its own real box elsewhere (FacetWP's own
+ * integration point).
  *
- * Grid auto-placement fills the earliest free cell first and skips ones
- * already occupied by an explicitly-placed item, so as long as the
- * promo is present, cards can never land in its column -- a structural
- * guarantee from the layout algorithm, not incidental. On the unlocked
- * directory page there's no promo image to show at all (only a locked
- * category page has one set), so there's simply no item reserving that
- * column and the cards use the full grid width. */
+ * `.business-directory-grid` itself stays a real (nested) grid rather
+ * than also being flattened -- deliberately: a single grid item that's
+ * *itself* a multi-row grid means the outer row's height naturally
+ * stretches to match whichever of "the cards" or "the promo" is taller,
+ * however many rows of cards that turns out to be. The alternative --
+ * flattening the cards into the outer grid too and making the promo
+ * *span* every row -- needs guessing a row count, and CSS has no
+ * "span to wherever the content ends" primitive: `grid-row: 1 / -1`
+ * silently collapses to one row (there's no explicit row template to
+ * count backwards from), and a large explicit span like `1 / span 999`
+ * looks like it should work but isn't free -- empty spanned tracks
+ * still take a slice of the promo's own height each, inflating the
+ * whole grid to tens of thousands of pixels tall. */
 
 .business-directory-results {
 	display: grid;
@@ -169,20 +173,40 @@
 	margin: 1.5em 0;
 }
 
-.business-directory-results .facetwp-template,
-.business-directory-results .business-directory-grid {
+.business-directory-results .facetwp-template {
 	display: contents;
+}
+
+.business-directory-results .business-directory-grid {
+	grid-column: 1 / -1;
 }
 
 .business-directory__no-results {
 	grid-column: 1 / -1;
 }
 
-/* Desktop (default): promo pinned to the grid's final column, spanning
- * every row -- see the longer explanation above .business-directory-grid. */
+/* Desktop only: when a promo exists, the card grid narrows to the first
+ * 3 of the outer grid's 4 columns (its own internal column count
+ * following suit), leaving the 4th solely to the promo. Explicitly
+ * bounded to min-width: 769px (not just left as the unqualified
+ * default) because this selector's specificity -- 3 classes, one of
+ * them repeated inside :has() -- would otherwise still beat the
+ * tablet/mobile column-count overrides below despite their narrower
+ * media queries: a later, narrower @media block doesn't outrank an
+ * earlier, wider one on specificity alone. */
+@media (min-width: 769px) {
+	.business-directory-results:has(.business-directory-grid__promo) .business-directory-grid {
+		grid-template-columns: repeat(3, 1fr);
+		grid-column: 1 / -2;
+	}
+
+	.business-directory-results:has(.business-directory-grid__promo) .business-directory__no-results {
+		grid-column: 1 / -2;
+	}
+}
+
 .business-directory-grid__promo {
-	grid-column: -1;
-	grid-row: 1 / -1;
+	grid-column: -2 / -1;
 	position: sticky;
 	top: 7rem;
 }
@@ -194,26 +218,27 @@
 	border-radius: 8px;
 }
 
-/* Tablet: 2 result columns; the promo drops out of the sticky side-column
- * layout and spans both columns as a full-width banner instead, in its
- * normal (post-cards) source position. */
+/* Tablet: 2 columns, for both the outer grid and the (always full-width
+ * here) card grid -- the promo is never narrowing the card grid at this
+ * size, it just becomes its own full-width row instead. */
 @media (max-width: 768px) {
-	.business-directory-results {
+	.business-directory-results,
+	.business-directory-results .business-directory-grid {
 		grid-template-columns: repeat(2, 1fr);
 	}
 
 	.business-directory-grid__promo {
 		grid-column: 1 / -1;
-		grid-row: auto;
 		position: static;
 	}
 }
 
-/* Mobile: 1 result column; the promo (still full-width and static per the
- * tablet rule above) is additionally reordered to the top of the grid, so
- * it appears above the search results rather than below them. */
+/* Mobile: 1 column; the promo (still full-width and static per the
+ * tablet rule above) is additionally reordered to the top of the grid,
+ * so it appears above the search results rather than below them. */
 @media (max-width: 544px) {
-	.business-directory-results {
+	.business-directory-results,
+	.business-directory-results .business-directory-grid {
 		grid-template-columns: 1fr;
 	}
 
