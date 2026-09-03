@@ -32,6 +32,13 @@ if ( ! defined( 'WP_CLI' ) ) {
 
 $term_slug = 'head-protection';
 $image_ids = [ 47105, 47360, 47409, 47682, 47700 ];
+// No links set on the test slides themselves -- banner_images now stores
+// ['id' => ..., 'link' => ...] pairs (see genre-meta.php) so each slide
+// can optionally be made clickable, but that's a per-slide editorial
+// decision, not something this test-data migration should invent.
+$image_items = array_map( function ( $id ) {
+	return [ 'id' => $id, 'link' => '' ];
+}, $image_ids );
 
 $term = get_term_by( 'slug', $term_slug, 'business_genre' );
 if ( ! $term ) {
@@ -39,11 +46,11 @@ if ( ! $term ) {
 }
 
 $existing = get_term_meta( $term->term_id, 'banner_images', true );
-$existing = is_array( $existing ) ? array_map( 'absint', $existing ) : [];
+$existing = is_array( $existing ) ? $existing : [];
 
-if ( $existing === $image_ids ) {
+if ( $existing === $image_items ) {
 	WP_CLI::success( "banner_images on '{$term->name}' already set to the test images -- nothing to do." );
 } else {
-	update_term_meta( $term->term_id, 'banner_images', $image_ids );
+	update_term_meta( $term->term_id, 'banner_images', $image_items );
 	WP_CLI::success( "Set banner_images on '{$term->name}' to the 5 homepage slider images." );
 }

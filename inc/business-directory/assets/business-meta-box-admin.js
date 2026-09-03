@@ -78,10 +78,13 @@
 	} );
 
 	function refreshHiddenInput( $wrap ) {
-		var ids = $wrap.find( '.hse-business-gallery__item' ).map( function () {
-			return $( this ).data( 'id' );
+		var items = $wrap.find( '.hse-business-gallery__item' ).map( function () {
+			return {
+				id: $( this ).data( 'id' ),
+				link: $( this ).find( '.hse-business-gallery__link' ).val() || ''
+			};
 		} ).get();
-		$wrap.find( '.hse-business-gallery__input' ).val( ids.join( ',' ) );
+		$wrap.find( '.hse-business-gallery__input' ).val( JSON.stringify( items ) );
 	}
 
 	$( document ).on( 'click', '.hse-business-gallery__add', function ( e ) {
@@ -109,7 +112,7 @@
 					: attachment.url;
 
 				$list.append(
-					$( '<li class="hse-business-gallery__item"><img alt=""><button type="button" class="hse-business-gallery__remove" aria-label="Remove image">&times;</button></li>' )
+					$( '<li class="hse-business-gallery__item"><img alt=""><input type="text" class="hse-business-gallery__link" placeholder="Link URL (optional)"><button type="button" class="hse-business-gallery__remove" aria-label="Remove image">&times;</button></li>' )
 						.attr( 'data-id', attachment.id )
 						.find( 'img' ).attr( 'src', thumbUrl ).end()
 				);
@@ -126,6 +129,10 @@
 		var $wrap = $( this ).closest( '.hse-business-gallery' );
 		$( this ).closest( '.hse-business-gallery__item' ).remove();
 		refreshHiddenInput( $wrap );
+	} );
+
+	$( document ).on( 'input', '.hse-business-gallery__link', function () {
+		refreshHiddenInput( $( this ).closest( '.hse-business-gallery' ) );
 	} );
 
 	$( document ).on( 'click', '.hse-single-image-picker__select', function ( e ) {
@@ -159,6 +166,7 @@
 		var $wrap = $( this ).closest( '.hse-single-image-picker' );
 		$wrap.find( '.hse-single-image-picker__input' ).val( '' );
 		$wrap.find( '.hse-single-image-picker__preview' ).empty();
+		$wrap.find( '.hse-single-image-picker__link' ).val( '' );
 		$( this ).hide();
 	} );
 } )( jQuery );

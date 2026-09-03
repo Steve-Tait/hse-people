@@ -20,13 +20,15 @@ $locked_genre_term = $locked_genre_slug ? get_term_by( 'slug', $locked_genre_slu
 // Both are set per-term via the "Category Banner Images" / "Results Grid
 // Promo Image" fields on the business_genre edit screen (see
 // inc/business-directory/genre-meta.php), so only apply on a locked
-// category page -- there's no single relevant term otherwise.
-$banner_image_ids    = [];
-$grid_promo_image_id = 0;
+// category page -- there's no single relevant term otherwise. Each
+// banner slide, and the promo image, can carry its own optional link.
+$banner_items          = [];
+$grid_promo_image_id   = 0;
+$grid_promo_image_link = '';
 if ( $locked_genre_term ) {
-	$banner_image_ids = get_term_meta( $locked_genre_term->term_id, 'banner_images', true );
-	$banner_image_ids = is_array( $banner_image_ids ) ? array_map( 'absint', $banner_image_ids ) : [];
-	$grid_promo_image_id = absint( get_term_meta( $locked_genre_term->term_id, 'grid_promo_image', true ) );
+	$banner_items          = hse_normalise_banner_items( get_term_meta( $locked_genre_term->term_id, 'banner_images', true ) );
+	$grid_promo_image_id   = absint( get_term_meta( $locked_genre_term->term_id, 'grid_promo_image', true ) );
+	$grid_promo_image_link = get_term_meta( $locked_genre_term->term_id, 'grid_promo_image_link', true );
 }
 
 get_header(); ?>
@@ -41,14 +43,23 @@ get_header(); ?>
 		<main id="main" class="site-main">
 			<div class="business-directory-container">
 
-				<?php if ( ! empty( $banner_image_ids ) ) : ?>
+				<?php if ( ! empty( $banner_items ) ) : ?>
 					<div class="business-directory__banner-slider" data-banner-slider>
 						<div class="business-directory__banner-track">
-							<?php foreach ( $banner_image_ids as $banner_image_id ) :
-								echo wp_get_attachment_image( $banner_image_id, 'large', false, [ 'class' => 'business-directory__banner-slide' ] );
+							<?php foreach ( $banner_items as $banner_item ) :
+								$slide_image = wp_get_attachment_image( $banner_item['id'], 'large', false, [ 'class' => 'business-directory__banner-slide-img' ] );
+								if ( ! $slide_image ) {
+									continue;
+								}
+								if ( $banner_item['link'] ) :
+									?>
+									<a href="<?php echo esc_url( $banner_item['link'] ); ?>" class="business-directory__banner-slide"><?php echo $slide_image; ?></a>
+								<?php else : ?>
+									<div class="business-directory__banner-slide"><?php echo $slide_image; ?></div>
+								<?php endif;
 							endforeach; ?>
 						</div>
-						<?php if ( count( $banner_image_ids ) > 1 ) : ?>
+						<?php if ( count( $banner_items ) > 1 ) : ?>
 							<button type="button" class="business-directory__banner-nav business-directory__banner-nav--prev" aria-label="<?php esc_attr_e( 'Previous', 'astra' ); ?>">&#8249;</button>
 							<button type="button" class="business-directory__banner-nav business-directory__banner-nav--next" aria-label="<?php esc_attr_e( 'Next', 'astra' ); ?>">&#8250;</button>
 						<?php endif; ?>
@@ -148,7 +159,11 @@ get_header(); ?>
 
 					<?php if ( $grid_promo_image_id ) : ?>
 						<div class="business-directory-grid__promo">
-							<?php echo wp_get_attachment_image( $grid_promo_image_id, 'medium' ); ?>
+							<?php if ( $grid_promo_image_link ) : ?>
+								<a href="<?php echo esc_url( $grid_promo_image_link ); ?>"><?php echo wp_get_attachment_image( $grid_promo_image_id, 'medium' ); ?></a>
+							<?php else : ?>
+								<?php echo wp_get_attachment_image( $grid_promo_image_id, 'medium' ); ?>
+							<?php endif; ?>
 						</div>
 					<?php endif; ?>
 				</div>
