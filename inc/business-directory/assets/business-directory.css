@@ -1,6 +1,12 @@
 /* Business/Supplier directory: cards, single page, and filter layout */
 
 .business-directory-container {
+	/* Astra sets `html { box-sizing: border-box }` sitewide, which would
+	 * otherwise count this padding inside the 1200px max-width, leaving
+	 * .business-directory__banner-slider (100% of this container) short
+	 * of a true 1200px. content-box makes max-width the content width
+	 * itself, with padding added outside it. */
+	box-sizing: content-box;
 	max-width: 1200px;
 	margin: 0 auto;
 	padding: 2.5em 1.5em 3em;
@@ -158,7 +164,7 @@
 
 .business-directory-results {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	grid-template-columns: repeat(4, 1fr);
 	gap: 1.5em;
 	margin: 1.5em 0;
 }
@@ -172,6 +178,8 @@
 	grid-column: 1 / -1;
 }
 
+/* Desktop (default): promo pinned to the grid's final column, spanning
+ * every row -- see the longer explanation above .business-directory-grid. */
 .business-directory-grid__promo {
 	grid-column: -1;
 	grid-row: 1 / -1;
@@ -186,11 +194,31 @@
 	border-radius: 8px;
 }
 
-@media (max-width: 900px) {
+/* Tablet: 2 result columns; the promo drops out of the sticky side-column
+ * layout and spans both columns as a full-width banner instead, in its
+ * normal (post-cards) source position. */
+@media (max-width: 768px) {
+	.business-directory-results {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
 	.business-directory-grid__promo {
 		grid-column: 1 / -1;
 		grid-row: auto;
 		position: static;
+	}
+}
+
+/* Mobile: 1 result column; the promo (still full-width and static per the
+ * tablet rule above) is additionally reordered to the top of the grid, so
+ * it appears above the search results rather than below them. */
+@media (max-width: 544px) {
+	.business-directory-results {
+		grid-template-columns: 1fr;
+	}
+
+	.business-directory-grid__promo {
+		order: -1;
 	}
 }
 
