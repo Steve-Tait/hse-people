@@ -116,8 +116,16 @@ get_header(); ?>
 										<h3 class="business-single__section-title">Gallery</h3>
 										<div class="business-single__gallery-grid">
 											<?php foreach ( $gallery_ids as $image_id ) :
-												echo wp_get_attachment_image( $image_id, 'medium' );
-											endforeach; ?>
+												$thumb_html = wp_get_attachment_image( $image_id, 'medium' );
+												$full_url   = wp_get_attachment_image_url( $image_id, 'large' );
+												if ( ! $thumb_html || ! $full_url ) {
+													continue;
+												}
+												?>
+												<button type="button" class="business-single__gallery-thumb" data-full="<?php echo esc_url( $full_url ); ?>">
+													<?php echo $thumb_html; ?>
+												</button>
+											<?php endforeach; ?>
 										</div>
 									</div>
 								<?php endif; ?>

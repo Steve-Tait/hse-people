@@ -83,6 +83,25 @@ add_action( 'save_post_business', function ( $post_id ) {
 } );
 
 /**
+ * True for any query this "featured businesses rank first" behaviour
+ * should apply to: business-post-type queries (the directory grid,
+ * category archives) and the main sitewide search. Shared by both hooks
+ * below so their targeting can't drift apart.
+ */
+function hse_is_business_or_search_query( $query ) {
+	$post_type = $query->get( 'post_type' );
+	$is_business_query = ( 'business' === $post_type )
+		|| ( is_array( $post_type ) && in_array( 'business', $post_type, true ) )
+		|| $query->is_tax( 'business_genre' )
+		|| $query->is_tax( 'business_accreditation' )
+		|| $query->is_tax( 'location' );
+
+	$is_search_query = $query->is_search() && $query->is_main_query();
+
+	return $is_business_query || $is_search_query;
+}
+
+/**
  * Featured-first ordering for the directory grid/category archive and
  * sitewide search. Applied at the SQL level (not by re-sorting the
  * fetched array) so it holds up correctly across pagination -- a
@@ -95,16 +114,7 @@ add_action( 'save_post_business', function ( $post_id ) {
  * ordering unless this filter does it explicitly.
  */
 add_filter( 'posts_orderby', function ( $orderby, $query ) {
-	$post_type = $query->get( 'post_type' );
-	$is_business_query = ( 'business' === $post_type )
-		|| ( is_array( $post_type ) && in_array( 'business', $post_type, true ) )
-		|| $query->is_tax( 'business_genre' )
-		|| $query->is_tax( 'business_accreditation' )
-		|| $query->is_tax( 'location' );
-
-	$is_search_query = $query->is_search() && $query->is_main_query();
-
-	if ( ! $is_business_query && ! $is_search_query ) {
+	if ( ! hse_is_business_or_search_query( $query ) ) {
 		return $orderby;
 	}
 
@@ -119,3 +129,22 @@ add_filter( 'posts_orderby', function ( $orderby, $query ) {
 
 	return $orderby ? "$case, $orderby" : $case;
 }, 10, 2 );
+
+/**
+ * Explicitly opt these same queries out of WP_Query's own native
+ * sticky-post handling (the array-splice in WP_Query::get_posts() that
+ * force-includes every sticky post ID, bypassing tax_query/meta_query
+ * entirely). That mechanism is normally scoped to `is_home` -- the blog
+ * index -- but FacetWP's AJAX "wp" template replay ends up flagging its
+ * rebuilt query as is_home too, so without this, the sole sticky
+ * business post leaks into every filtered result set regardless of
+ * whether it actually matches, once WP_Query resolves the query context
+ * as if it were the site's post feed. This theme's own featured-first
+ * ordering above is the only "sticky" behaviour business queries are
+ * meant to have.
+ */
+add_action( 'pre_get_posts', function ( $query ) {
+	if ( hse_is_business_or_search_query( $query ) ) {
+		$query->set( 'ignore_sticky_posts', true );
+	}
+} );

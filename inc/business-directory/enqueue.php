@@ -34,4 +34,14 @@ add_action( 'wp_enqueue_scripts', function () {
 			true
 		);
 	}
+
+	if ( is_singular( 'business' ) ) {
+		wp_enqueue_script(
+			'business-gallery-lightbox',
+			get_template_directory_uri() . '/inc/business-directory/assets/business-gallery-lightbox.js',
+			[],
+			defined( 'ASTRA_THEME_VERSION' ) ? ASTRA_THEME_VERSION : false,
+			true
+		);
+	}
 } );
