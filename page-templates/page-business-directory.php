@@ -142,7 +142,7 @@ get_header(); ?>
 								endwhile; ?>
 							</div>
 						<?php else : ?>
-							<p><?php esc_html_e( 'No suppliers match your search.', 'astra' ); ?></p>
+							<p class="business-directory__no-results"><?php esc_html_e( 'No suppliers match your search.', 'astra' ); ?></p>
 						<?php endif; ?>
 					</div>
 

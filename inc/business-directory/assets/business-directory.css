@@ -136,29 +136,47 @@
 	margin: 1.5em 0;
 }
 
-/* Results grid promo image (page-business-directory.php only): reserves
- * a whole column for a single sticky image rather than interleaving it
- * into the card grid, so no result tile can ever land in that column --
- * the grid and the image are separate flex siblings, not one grid with
- * skipped cells. */
+/* Results grid promo image (page-business-directory.php only): pinned to
+ * the grid's own last column, spanning every row, instead of a
+ * fixed-width sidebar next to it -- so it's genuinely the same width as
+ * a real card column, growing/shrinking with the grid exactly like one
+ * would, rather than staying a static 260px while the cards around it
+ * grow. `.facetwp-template`/`.business-directory-grid` go `display:
+ * contents` here so the actual card elements become direct items of
+ * *this* grid rather than of a nested grid inside a flex sibling --
+ * scoped to inside `.business-directory-results` only, since both
+ * classes are also used with their own real box elsewhere (e.g.
+ * taxonomy-business_genre.php).
+ *
+ * Grid auto-placement fills the earliest free cell first and skips ones
+ * already occupied by an explicitly-placed item, so as long as the
+ * promo is present, cards can never land in its column -- a structural
+ * guarantee from the layout algorithm, not incidental. On the unlocked
+ * directory page there's no promo image to show at all (only a locked
+ * category page has one set), so there's simply no item reserving that
+ * column and the cards use the full grid width. */
 
 .business-directory-results {
-	display: flex;
-	align-items: flex-start;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
 	gap: 1.5em;
 	margin: 1.5em 0;
 }
 
+.business-directory-results .facetwp-template,
 .business-directory-results .business-directory-grid {
-	flex: 1 1 auto;
-	min-width: 0;
-	margin: 0;
+	display: contents;
+}
+
+.business-directory__no-results {
+	grid-column: 1 / -1;
 }
 
 .business-directory-grid__promo {
-	flex: 0 0 260px;
+	grid-column: -1;
+	grid-row: 1 / -1;
 	position: sticky;
-	top: 20px;
+	top: 7rem;
 }
 
 .business-directory-grid__promo img {
@@ -169,14 +187,10 @@
 }
 
 @media (max-width: 900px) {
-	.business-directory-results {
-		flex-direction: column;
-	}
-
 	.business-directory-grid__promo {
+		grid-column: 1 / -1;
+		grid-row: auto;
 		position: static;
-		flex-basis: auto;
-		width: 100%;
 	}
 }
 
