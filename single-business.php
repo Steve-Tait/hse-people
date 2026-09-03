@@ -41,8 +41,6 @@ get_header(); ?>
 				$website     = get_post_meta( $post_id, 'business_website_address', true );
 				$address     = get_post_meta( $post_id, 'business_address', true );
 				$zip         = get_post_meta( $post_id, 'zip_code', true );
-				$gallery_ids = get_post_meta( $post_id, 'business_gallery', true );
-				$gallery_ids = is_array( $gallery_ids ) ? $gallery_ids : [];
 				$demo_url    = get_post_meta( $post_id, 'demonstration_video', true );
 				$genres         = get_the_terms( get_the_ID(), 'business_genre' );
 				$tags           = get_the_terms( get_the_ID(), 'business_tag' );
@@ -60,7 +58,8 @@ get_header(); ?>
 					$tier = 'free';
 				}
 
-				$socials = [];
+				$socials     = [];
+				$gallery_ids = [];
 				if ( in_array( $tier, [ 'standard', 'premium' ], true ) ) {
 					$socials = array_filter( [
 						'facebook'  => get_post_meta( $post_id, 'social_facebook', true ),
@@ -69,6 +68,9 @@ get_header(); ?>
 						'linkedin'  => get_post_meta( $post_id, 'social_linkedin', true ),
 						'x'         => get_post_meta( $post_id, 'social_x', true ),
 					] );
+
+					$gallery_ids = get_post_meta( $post_id, 'business_gallery', true );
+					$gallery_ids = is_array( $gallery_ids ) ? $gallery_ids : [];
 				}
 
 				$review_url    = '';

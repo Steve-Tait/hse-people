@@ -15,11 +15,11 @@
  * never actually rendered anything to save).
  *
  * Fields are gated by the `business_tier` radio (Free/Standard/Premium):
- * social links need Standard or Premium, the Review group and Catalog
- * URL need Premium. This is an *editing UI* restriction only (see
- * assets/business-meta-box-admin.js) -- a lower-tier post that already
- * has values in a higher-tier field (e.g. after a downgrade) keeps that
- * data; nothing here clears it.
+ * social links and the Business Gallery need Standard or Premium, the
+ * Review group and Catalog URL need Premium. This is an *editing UI*
+ * restriction only (see assets/business-meta-box-admin.js) -- a
+ * lower-tier post that already has values in a higher-tier field (e.g.
+ * after a downgrade) keeps that data; nothing here clears it.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -177,7 +177,7 @@ function hse_business_details_meta_box_render( $post ) {
 			</tbody>
 		<?php endforeach; ?>
 
-		<tbody>
+		<tbody class="hse-business-fields__group" data-show-for-tiers="standard,premium">
 			<tr>
 				<th scope="row"><?php esc_html_e( 'Business Gallery', 'astra' ); ?></th>
 				<td><?php hse_business_gallery_field( $post ); ?></td>
@@ -324,8 +324,22 @@ add_action( 'save_post_business', function ( $post_id ) {
 	}
 
 	if ( isset( $_POST['business_gallery'] ) ) {
-		$ids = array_filter( array_map( 'absint', explode( ',', wp_unslash( $_POST['business_gallery'] ) ) ) );
-		update_post_meta( $post_id, 'business_gallery', array_values( $ids ) );
+		// The gallery picker's hidden input is JSON (assets/business-meta-box-admin.js
+		// shares its serialising code with the Category Banner Images picker on
+		// the business_genre term-edit screen, which needs a per-item link
+		// alongside the ID) -- this field has no link of its own, so only the
+		// id is used.
+		$decoded = json_decode( wp_unslash( $_POST['business_gallery'] ), true );
+		$ids     = [];
+		if ( is_array( $decoded ) ) {
+			foreach ( $decoded as $item ) {
+				$id = is_array( $item ) ? absint( $item['id'] ?? 0 ) : absint( $item );
+				if ( $id ) {
+					$ids[] = $id;
+				}
+			}
+		}
+		update_post_meta( $post_id, 'business_gallery', array_values( array_unique( $ids ) ) );
 	}
 } );
 
