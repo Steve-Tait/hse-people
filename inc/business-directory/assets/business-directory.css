@@ -1,12 +1,13 @@
 /* Business/Supplier directory: cards, single page, and filter layout */
 
 .business-directory-container {
-	/* Astra sets `html { box-sizing: border-box }` sitewide, which would
-	 * otherwise count this padding inside the 1200px max-width, leaving
-	 * .business-directory__banner-slider (100% of this container) short
-	 * of a true 1200px. content-box makes max-width the content width
-	 * itself, with padding added outside it. */
-	box-sizing: content-box;
+	/* border-box, matching Astra's sitewide default -- content-box was
+	 * tried here to get .business-directory__banner-slider a true
+	 * 1200px width, but Astra's `*, ::before, ::after { box-sizing:
+	 * inherit }` cascades that override down through every descendant
+	 * too, not just this element, oversizing unrelated children like
+	 * .facet-dropdown__toggle in the process. */
+	box-sizing: border-box;
 	max-width: 1200px;
 	margin: 0 auto;
 	padding: 2.5em 1.5em 3em;
@@ -139,7 +140,6 @@
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
 	gap: 1.5em;
-	margin: 1.5em 0;
 }
 
 /* Results grid promo image (page-business-directory.php only): pinned to
@@ -171,6 +171,7 @@
 	grid-template-columns: repeat(4, 1fr);
 	gap: 1.5em;
 	margin: 1.5em 0;
+	align-items: start;
 }
 
 .business-directory-results .facetwp-template {
@@ -188,13 +189,13 @@
 /* Desktop only: when a promo exists, the card grid narrows to the first
  * 3 of the outer grid's 4 columns (its own internal column count
  * following suit), leaving the 4th solely to the promo. Explicitly
- * bounded to min-width: 769px (not just left as the unqualified
+ * bounded to min-width: 1025px (not just left as the unqualified
  * default) because this selector's specificity -- 3 classes, one of
  * them repeated inside :has() -- would otherwise still beat the
  * tablet/mobile column-count overrides below despite their narrower
  * media queries: a later, narrower @media block doesn't outrank an
  * earlier, wider one on specificity alone. */
-@media (min-width: 769px) {
+@media (min-width: 1025px) {
 	.business-directory-results:has(.business-directory-grid__promo) .business-directory-grid {
 		grid-template-columns: repeat(3, 1fr);
 		grid-column: 1 / -2;
@@ -221,7 +222,7 @@
 /* Tablet: 2 columns, for both the outer grid and the (always full-width
  * here) card grid -- the promo is never narrowing the card grid at this
  * size, it just becomes its own full-width row instead. */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
 	.business-directory-results,
 	.business-directory-results .business-directory-grid {
 		grid-template-columns: repeat(2, 1fr);
