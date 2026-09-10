@@ -7,13 +7,12 @@
  * taxonomy. These are new additions for the supplier directory feature
  * and are registered in code so they're version-controlled.
  *
- * `business_accreditation` was originally registered as `business_badge`
- * ("Business Badges") -- renamed here in code, with a migration
- * (migrations/2026-09-01-business-accreditation-rename.php) renaming the
- * matching `wp_term_taxonomy.taxonomy` rows for existing terms so they
- * keep resolving under the new name. It's since become hierarchical
- * (accreditation schemes grouped under their issuing body, e.g. BSiF ->
- * Registered Safety Supplier Scheme) -- see
+ * `business_accreditation` briefly went by `business_badge` ("Business
+ * Badges") early in this feature's own local development, before it was
+ * renamed in code -- that name was never deployed anywhere, so there was
+ * never any real content to migrate. It's hierarchical (accreditation
+ * schemes grouped under their issuing body, e.g. BSiF -> Registered
+ * Safety Supplier Scheme) -- see
  * migrations/2026-09-02-business-accreditation-hierarchy.php for the
  * term content, and hse_business_strip_parent_accreditations() below for
  * why a business can only ever end up tagged with a child term.

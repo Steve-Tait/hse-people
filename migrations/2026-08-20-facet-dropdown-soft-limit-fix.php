@@ -9,7 +9,7 @@
  * a "+ N more" toggle link -- redundant now that the whole list scrolls
  * inside the dropdown panel, and the toggle link doesn't fit that layout.
  *
- * `business_badge` is a code-registered facet (see
+ * `business_accreditation` is a code-registered facet (see
  * inc/business-directory/facetwp-facets.php) so it needed no DB change.
  * `business_genre` remains DB-managed via FacetWP's admin screen (the
  * site's pre-existing convention), so its `soft_limit` is fixed here.

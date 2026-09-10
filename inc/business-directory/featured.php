@@ -2,9 +2,10 @@
 /**
  * "Featured" business flag.
  *
- * Used to be the `featured` term in the business_badge (now
- * business_accreditation) taxonomy. It's a checkbox on the business post
- * now instead, backed by WordPress's own sticky-post storage
+ * Briefly modelled as a `featured` term in the accreditation taxonomy
+ * during this feature's own early local development (never deployed
+ * anywhere), before settling on a checkbox instead, backed by
+ * WordPress's own sticky-post storage
  * (stick_post() / unstick_post() / is_sticky(), the `sticky_posts`
  * option) rather than a new custom meta key -- that's exactly what the
  * sticky mechanism already models ("pin this to the top"), and it's

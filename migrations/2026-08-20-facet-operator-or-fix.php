@@ -9,7 +9,7 @@
  * are treated as "match either", which is what a multi-select checkbox
  * filter is expected to do.
  *
- * `business_badge` is a code-registered facet (see
+ * `business_accreditation` is a code-registered facet (see
  * inc/business-directory/facetwp-facets.php) so it needed no DB change.
  * `business_genre` remains DB-managed via FacetWP's admin screen (the
  * site's pre-existing convention), so its `operator` is fixed here.

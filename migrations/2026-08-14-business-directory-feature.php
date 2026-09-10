@@ -13,7 +13,6 @@
  * This script only handles what's fundamentally WordPress content/data,
  * not code:
  *
- *   - seeding the business_accreditation terms
  *   - clearing out the placeholder/test business posts, so real supplier
  *     content entry starts from a clean slate
  *   - removing the Elementor Theme Builder templates this feature used to
@@ -52,32 +51,7 @@ function bdf_log( $msg ) {
 }
 
 // ---------------------------------------------------------------------
-// 1. Seed business_accreditation terms (content, not code).
-//
-// Originally seeded under `business_badge` (including a 'Featured'
-// term); that taxonomy was renamed to `business_accreditation` and
-// 'Featured' became a post checkbox instead of a term (see
-// migrations/2026-09-01-business-accreditation-rename.php, which only
-// has renaming/removal work to do on an environment that already ran
-// THIS migration under the old name -- a fresh environment just seeds
-// the right terms directly here). 'Accredited' was added by hand during
-// local testing and never captured in a migration until now.
-// ---------------------------------------------------------------------
-function bdf_seed_badge_terms() {
-	if ( ! taxonomy_exists( 'business_accreditation' ) ) {
-		bdf_log( 'WARNING: business_accreditation taxonomy not registered -- deploy the theme code first.' );
-		return;
-	}
-	foreach ( [ 'Verified', 'BSIF Affiliate Member', 'BSIF RSSS Member', 'Accredited' ] as $term ) {
-		if ( ! term_exists( $term, 'business_accreditation' ) ) {
-			wp_insert_term( $term, 'business_accreditation' );
-			bdf_log( "Created business_accreditation term: $term" );
-		}
-	}
-}
-
-// ---------------------------------------------------------------------
-// 2. Delete the ORIGINAL placeholder/test business posts that came with
+// 1. Delete the ORIGINAL placeholder/test business posts that came with
 //    the site's initial "Business" feature build (and any media attached
 //    directly to them), so real content entry starts clean.
 //
@@ -114,7 +88,7 @@ function bdf_delete_placeholder_business_posts() {
 }
 
 // ---------------------------------------------------------------------
-// 3. Fix the sitewide Search Archive template (1144, condition
+// 2. Fix the sitewide Search Archive template (1144, condition
 //    include/archive/search -- renders on WordPress's search results
 //    page, not specific to suppliers at all) BEFORE deleting the loop
 //    card below: it displays each result using a "Custom" skin pointing
@@ -166,7 +140,7 @@ function bdf_fix_search_archive_skin() {
 }
 
 // ---------------------------------------------------------------------
-// 4. Remove the Elementor Theme Builder templates this feature used to
+// 3. Remove the Elementor Theme Builder templates this feature used to
 //    rely on -- Elementor is no longer involved in this section.
 // ---------------------------------------------------------------------
 function bdf_delete_elementor_templates() {
@@ -182,7 +156,7 @@ function bdf_delete_elementor_templates() {
 }
 
 // ---------------------------------------------------------------------
-// 5. Strip Elementor from the directory page and assign the new,
+// 4. Strip Elementor from the directory page and assign the new,
 //    code-based Page Template instead.
 //
 //    Resolved by slug ('business-directory'), not a hardcoded post ID --
@@ -220,7 +194,7 @@ function bdf_convert_directory_page() {
 }
 
 // ---------------------------------------------------------------------
-// 6. Nav menu: add the directory page if not already present. Resolved
+// 5. Nav menu: add the directory page if not already present. Resolved
 //    by slug for the same reason as bdf_convert_directory_page() above
 //    -- a hardcoded page ID isn't a safe cross-environment identifier.
 // ---------------------------------------------------------------------
@@ -256,7 +230,7 @@ function bdf_add_nav_menu_item() {
 }
 
 // ---------------------------------------------------------------------
-// 7. Remove now-redundant database copies of anything that moved into
+// 6. Remove now-redundant database copies of anything that moved into
 //    code (harmless no-op if this environment never had them).
 // ---------------------------------------------------------------------
 function bdf_remove_redundant_db_copies() {
@@ -275,8 +249,8 @@ function bdf_remove_redundant_db_copies() {
 	}
 
 	$taxes = get_option( 'cptui_taxonomies', [] );
-	if ( isset( $taxes['business_badge'] ) || isset( $taxes['business_tag'] ) ) {
-		unset( $taxes['business_badge'], $taxes['business_tag'] );
+	if ( isset( $taxes['business_tag'] ) ) {
+		unset( $taxes['business_tag'] );
 		update_option( 'cptui_taxonomies', $taxes );
 		bdf_log( 'Removed redundant CPT UI taxonomy entries (now code-based).' );
 	}
@@ -284,9 +258,9 @@ function bdf_remove_redundant_db_copies() {
 	$settings = json_decode( get_option( 'facetwp_settings' ), true );
 	if ( is_array( $settings ) && ! empty( $settings['facets'] ) ) {
 		$names_before = wp_list_pluck( $settings['facets'], 'name' );
-		if ( in_array( 'business_badge', $names_before, true ) || in_array( 'business_search', $names_before, true ) ) {
+		if ( in_array( 'business_search', $names_before, true ) ) {
 			$settings['facets'] = array_values( array_filter( $settings['facets'], function ( $f ) {
-				return ! in_array( $f['name'], [ 'business_badge', 'business_search' ], true );
+				return 'business_search' !== $f['name'];
 			} ) );
 			update_option( 'facetwp_settings', wp_json_encode( $settings ) );
 			bdf_log( 'Removed redundant FacetWP facet entries (now code-based).' );
@@ -297,7 +271,6 @@ function bdf_remove_redundant_db_copies() {
 // ---------------------------------------------------------------------
 // Run
 // ---------------------------------------------------------------------
-bdf_seed_badge_terms();
 bdf_delete_placeholder_business_posts();
 bdf_fix_search_archive_skin();
 bdf_delete_elementor_templates();

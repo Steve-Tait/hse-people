@@ -10,7 +10,7 @@
  * visible (shown disabled/greyed out, per FacetWP's own front.css) rather
  * than removing them, so the full list is always available.
  *
- * `business_badge` is a code-registered facet (see
+ * `business_accreditation` is a code-registered facet (see
  * inc/business-directory/facetwp-facets.php) so it needed no DB change.
  * `business_genre` remains DB-managed via FacetWP's admin screen (the
  * site's pre-existing convention), so its `ghosts` setting is fixed here.
