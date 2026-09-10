@@ -88,8 +88,14 @@ $data = [
 $updated = 0;
 
 foreach ( $data as $post_id => $fields ) {
-	if ( ! get_post( $post_id ) ) {
-		WP_CLI::warning( "Post $post_id not found, skipping." );
+	if ( 'business' !== get_post_type( $post_id ) ) {
+		// Covers both "doesn't exist" and "exists but isn't one of our
+		// demo businesses" -- these IDs are only meaningful on an
+		// environment that ran the original demo-data migrations; on
+		// production they could just as easily belong to a real,
+		// unrelated post/page/attachment, which must never get
+		// business postmeta written onto it by ID coincidence.
+		WP_CLI::warning( "Post $post_id is not a business post, skipping." );
 		continue;
 	}
 

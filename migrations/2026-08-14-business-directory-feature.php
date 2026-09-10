@@ -25,10 +25,16 @@
  *     run even if those were never created on this environment)
  *
  * Assumes the baseline "business" feature already exists on the target site
- * (CPT `business`, taxonomy `business_genre`, page 1001 "Business
- * Directory") -- these came from the original site build, not from this
- * migration, and are expected to have the same post IDs on any environment
- * restored from the same production database.
+ * (CPT `business`, taxonomy `business_genre`, a page titled "Business
+ * Directory" at slug `business-directory`) -- these came from the original
+ * site build, not from this migration. The directory page is resolved by
+ * slug, not a hardcoded ID: this environment was originally seeded from a
+ * production database export, so its numeric ID likely does still match
+ * production's, but a page ID isn't a safe assumption to build on (`page`
+ * is a post type every real site already has plenty of; if that page were
+ * ever recreated, or this ever runs against a differently-seeded
+ * environment, trusting the ID could silently strip Elementor data from,
+ * and reassign the template of, a completely unrelated real page).
  *
  * Usage (run once per environment, after deploying the theme code):
  *   wp eval-file wp-content/themes/astra/migrations/2026-08-14-business-directory-feature.php --allow-root
@@ -178,13 +184,27 @@ function bdf_delete_elementor_templates() {
 // ---------------------------------------------------------------------
 // 5. Strip Elementor from the directory page and assign the new,
 //    code-based Page Template instead.
+//
+//    Resolved by slug ('business-directory'), not a hardcoded post ID --
+//    unlike the `business`/`elementor_library` post-type IDs deleted
+//    above, a raw page ID has no protection against collision with real
+//    content: `page` is a post type every production site already has
+//    plenty of, so an ID that happens to be "the directory page" here
+//    (a local dev environment's own auto-increment history) could just
+//    as easily be a real, unrelated, already-published page on
+//    production. Stripping that page's Elementor data and reassigning
+//    its template would be a real, silent content-corruption bug, not
+//    just a skipped no-op. A slug match is a far more deliberate,
+//    portable identifier for "the same conceptual page" across
+//    environments.
 // ---------------------------------------------------------------------
 function bdf_convert_directory_page() {
-	$post_id = 1001;
-	if ( ! get_post( $post_id ) ) {
-		bdf_log( "WARNING: page $post_id not found, skipping directory page conversion." );
+	$page = get_page_by_path( 'business-directory' );
+	if ( ! $page || 'page' !== $page->post_type ) {
+		bdf_log( "WARNING: no page found at slug 'business-directory', skipping directory page conversion -- if the existing Elementor-built directory page lives at a different slug on this environment, rename it to 'business-directory' first (or adjust this migration), then re-run." );
 		return;
 	}
+	$post_id = $page->ID;
 	$current_template = get_post_meta( $post_id, '_wp_page_template', true );
 	if ( $current_template === 'page-templates/page-business-directory.php' ) {
 		bdf_log( 'Directory page already converted, skipping.' );
@@ -196,13 +216,22 @@ function bdf_convert_directory_page() {
 	}
 	update_post_meta( $post_id, '_wp_page_template', 'page-templates/page-business-directory.php' );
 
-	bdf_log( 'Converted directory page 1001 to the new Page Template.' );
+	bdf_log( "Converted directory page $post_id to the new Page Template." );
 }
 
 // ---------------------------------------------------------------------
-// 6. Nav menu: add the directory page if not already present.
+// 6. Nav menu: add the directory page if not already present. Resolved
+//    by slug for the same reason as bdf_convert_directory_page() above
+//    -- a hardcoded page ID isn't a safe cross-environment identifier.
 // ---------------------------------------------------------------------
 function bdf_add_nav_menu_item() {
+	$page = get_page_by_path( 'business-directory' );
+	if ( ! $page || 'page' !== $page->post_type ) {
+		bdf_log( "WARNING: no page found at slug 'business-directory', skipping nav menu item." );
+		return;
+	}
+	$post_id = $page->ID;
+
 	$menu = wp_get_nav_menu_object( 'Primary Menu' );
 	if ( ! $menu ) {
 		bdf_log( 'WARNING: "Primary Menu" not found, skipping nav menu item.' );
@@ -210,14 +239,14 @@ function bdf_add_nav_menu_item() {
 	}
 	$items = wp_get_nav_menu_items( $menu->term_id );
 	foreach ( $items as $item ) {
-		if ( (int) $item->object_id === 1001 && $item->object === 'page' ) {
+		if ( (int) $item->object_id === $post_id && $item->object === 'page' ) {
 			bdf_log( 'Nav menu item already present, skipping.' );
 			return;
 		}
 	}
 	wp_update_nav_menu_item( $menu->term_id, 0, [
 		'menu-item-title' => 'Business Directory',
-		'menu-item-object-id' => 1001,
+		'menu-item-object-id' => $post_id,
 		'menu-item-object' => 'page',
 		'menu-item-type' => 'post_type',
 		'menu-item-status' => 'publish',

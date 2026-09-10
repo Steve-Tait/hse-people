@@ -128,8 +128,14 @@ $assignments = [
 
 $assigned = 0;
 foreach ( $assignments as $post_id => $names ) {
-	if ( ! get_post( $post_id ) ) {
-		WP_CLI::warning( "Post $post_id not found, skipping accreditation assignment." );
+	if ( 'business' !== get_post_type( $post_id ) ) {
+		// Covers both "doesn't exist" and "exists but isn't one of our
+		// demo businesses" -- these IDs are only meaningful on an
+		// environment that ran the original demo-data migrations; on
+		// production they could just as easily belong to a real,
+		// unrelated post/page/attachment, which must never get
+		// accreditation terms written onto it by ID coincidence.
+		WP_CLI::warning( "Post $post_id is not a business post, skipping accreditation assignment." );
 		continue;
 	}
 
