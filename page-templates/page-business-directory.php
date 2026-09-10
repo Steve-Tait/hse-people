@@ -7,15 +7,20 @@
  * classic-template pattern: wrap the loop in a `.facetwp-template` element
  * and pass `'facetwp' => true` in the WP_Query args.
  *
- * Also serves /business-directory/category/{slug}/ (see
+ * Also serves {this page's own URL}/category/{slug}/ (see
  * inc/business-directory/rewrite.php) -- the same page, permanently
  * filtered to one business_genre term with the category facet hidden,
  * since it's fixed by the URL. Search still applies within that category.
+ * This template isn't tied to one fixed page/URL -- it's a normal,
+ * selectable Page Template -- so that sub-URL always follows wherever
+ * it's actually assigned.
  */
 
 $locked_genre_slug = get_query_var( 'business_genre' );
 $locked_genre_term = $locked_genre_slug ? get_term_by( 'slug', $locked_genre_slug, 'business_genre' ) : false;
 // An unrecognised category slug just falls back to the normal, unfiltered view.
+
+$directory_base_url = trailingslashit( get_permalink( get_queried_object_id() ) );
 
 // Both are set per-term via the "Category Banner Images" / "Results Grid
 // Promo Image" fields on the business_genre edit screen (see
@@ -93,7 +98,7 @@ get_header(); ?>
 							<h2><?php esc_html_e( 'Browse by Category', 'astra' ); ?></h2>
 							<div class="business-directory-category-grid">
 								<?php foreach ( $genre_terms as $genre_term ) : ?>
-									<a class="business-directory-category-tile" href="<?php echo esc_url( home_url( '/business-directory/category/' . $genre_term->slug . '/' ) ); ?>">
+									<a class="business-directory-category-tile" href="<?php echo esc_url( $directory_base_url . 'category/' . $genre_term->slug . '/' ); ?>">
 										<span class="business-directory-category-tile__name"><?php echo esc_html( $genre_term->name ); ?></span>
 										<span class="business-directory-category-tile__count">
 											<?php

@@ -185,7 +185,7 @@ get_header(); ?>
 								<h3 class="business-single__section-title">Category</h3>
 								<div class="business-single__term-pills">
 									<?php foreach ( $genres as $genre ) :
-										$url = home_url( '/business-directory/category/' . $genre->slug . '/' );
+										$url = hse_get_business_directory_url() . 'category/' . $genre->slug . '/';
 										?>
 										<a class="business-single__term-pill" href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $genre->name ); ?></a>
 									<?php endforeach; ?>
