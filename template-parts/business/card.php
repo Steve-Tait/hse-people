@@ -17,7 +17,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<?php if ( has_post_thumbnail() ) : ?>
 			<div class="business-card__logo">
-				<?php the_post_thumbnail( 'thumbnail' ); ?>
+				<?php
+				// 'medium' (proportional, no hard crop) -- not 'thumbnail',
+				// which WordPress hard-crops to an exact square by default
+				// (Settings > Media), cutting off the edges of any logo that
+				// isn't already square. object-fit: contain on the img below
+				// then shows the whole logo, letterboxed as needed within
+				// the fixed-height box.
+				the_post_thumbnail( 'medium' );
+				?>
 			</div>
 		<?php endif; ?>
 
