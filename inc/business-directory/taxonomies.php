@@ -7,15 +7,19 @@
  * taxonomy. These are new additions for the supplier directory feature
  * and are registered in code so they're version-controlled.
  *
+ * All three are admin-only (`public` => false): editable per business in
+ * wp-admin, with no public archive pages, filters, or badges on the
+ * frontend -- there's simply nothing on the public site that reads them
+ * right now.
+ *
  * `business_accreditation` briefly went by `business_badge` ("Business
  * Badges") early in this feature's own local development, before it was
  * renamed in code -- that name was never deployed anywhere, so there was
  * never any real content to migrate. It's hierarchical (accreditation
  * schemes grouped under their issuing body, e.g. BSiF -> Registered
- * Safety Supplier Scheme) -- see
- * migrations/2026-09-02-business-accreditation-hierarchy.php for the
- * term content, and hse_business_strip_parent_accreditations() below for
- * why a business can only ever end up tagged with a child term.
+ * Safety Supplier Scheme), and the save_post_business hook below ensures
+ * a business can only ever end up tagged with a child scheme, never the
+ * issuing-body group itself.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,16 +34,16 @@ add_action( 'init', function () {
 			'name'          => 'Accreditations',
 			'singular_name' => 'Accreditation',
 		],
-		'public'            => true,
-		'publicly_queryable' => true,
+		'public'            => false,
+		'publicly_queryable' => false,
 		'hierarchical'      => true,
 		'show_ui'           => true,
 		'show_in_menu'      => true,
-		'show_in_nav_menus' => true,
+		'show_in_nav_menus' => false,
 		'show_admin_column' => true,
 		'show_in_rest'      => true,
 		'query_var'         => true,
-		'rewrite'           => true,
+		'rewrite'           => false,
 	] );
 
 	register_taxonomy( 'business_tag', [ 'business' ], [
@@ -48,16 +52,16 @@ add_action( 'init', function () {
 			'name'          => 'Business Tags',
 			'singular_name' => 'Business Tag',
 		],
-		'public'            => true,
-		'publicly_queryable' => true,
+		'public'            => false,
+		'publicly_queryable' => false,
 		'hierarchical'      => false,
 		'show_ui'           => true,
 		'show_in_menu'      => true,
-		'show_in_nav_menus' => true,
+		'show_in_nav_menus' => false,
 		'show_admin_column' => true,
 		'show_in_rest'      => true,
 		'query_var'         => true,
-		'rewrite'           => true,
+		'rewrite'           => false,
 	] );
 
 	register_taxonomy( 'location', [ 'business' ], [
@@ -67,16 +71,16 @@ add_action( 'init', function () {
 			'singular_name' => 'Location',
 			'parent_item'   => 'Parent Location',
 		],
-		'public'            => true,
-		'publicly_queryable' => true,
+		'public'            => false,
+		'publicly_queryable' => false,
 		'hierarchical'      => true,
 		'show_ui'           => true,
 		'show_in_menu'      => true,
-		'show_in_nav_menus' => true,
+		'show_in_nav_menus' => false,
 		'show_admin_column' => true,
 		'show_in_rest'      => true,
 		'query_var'         => true,
-		'rewrite'           => true,
+		'rewrite'           => false,
 	] );
 
 } );

@@ -127,8 +127,6 @@ get_header(); ?>
 					<?php if ( ! $locked_genre_term ) : ?>
 						<?php get_template_part( 'template-parts/business/facet-dropdown', null, [ 'label' => __( 'Category', 'astra' ), 'facet' => 'business_genre' ] ); ?>
 					<?php endif; ?>
-					<?php get_template_part( 'template-parts/business/facet-dropdown', null, [ 'label' => __( 'Accreditations', 'astra' ), 'facet' => 'business_accreditation' ] ); ?>
-					<?php get_template_part( 'template-parts/business/facet-dropdown', null, [ 'label' => __( 'Location', 'astra' ), 'facet' => 'location' ] ); ?>
 				</div>
 
 				<?php

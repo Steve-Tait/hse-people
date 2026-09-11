@@ -42,12 +42,8 @@ get_header(); ?>
 				$address     = get_post_meta( $post_id, 'business_address', true );
 				$zip         = get_post_meta( $post_id, 'zip_code', true );
 				$demo_url    = get_post_meta( $post_id, 'demonstration_video', true );
-				$genres         = get_the_terms( get_the_ID(), 'business_genre' );
-				$tags           = get_the_terms( get_the_ID(), 'business_tag' );
-				$accreditations = get_the_terms( get_the_ID(), 'business_accreditation' );
-				$genres         = is_array( $genres ) ? $genres : [];
-				$tags           = is_array( $tags ) ? $tags : [];
-				$accreditations = is_array( $accreditations ) ? $accreditations : [];
+				$genres = get_the_terms( get_the_ID(), 'business_genre' );
+				$genres = is_array( $genres ) ? $genres : [];
 
 				// Tier gates which fields render, not which fields save --
 				// a downgraded business keeps its Standard/Premium data in
@@ -97,12 +93,9 @@ get_header(); ?>
 
 									<h1 class="business-single__title"><?php the_title(); ?></h1>
 
-									<?php if ( is_sticky( $post_id ) || ! empty( $accreditations ) ) : ?>
+									<?php if ( is_sticky( $post_id ) ) : ?>
 										<p class="business-single__accreditations">
-											<?php
-											hse_business_render_featured_badge( $post_id );
-											hse_business_render_accreditations( $accreditations );
-											?>
+											<?php hse_business_render_featured_badge( $post_id ); ?>
 										</p>
 									<?php endif; ?>
 								</div>
@@ -190,13 +183,6 @@ get_header(); ?>
 										<a class="business-single__term-pill" href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $genre->name ); ?></a>
 									<?php endforeach; ?>
 								</div>
-							<?php endif; ?>
-
-							<?php if ( ! empty( $tags ) ) : ?>
-								<h3 class="business-single__section-title">Tags</h3>
-								<p class="business-single__terms">
-									<?php echo esc_html( implode( ', ', wp_list_pluck( $tags, 'name' ) ) ); ?>
-								</p>
 							<?php endif; ?>
 						</aside>
 

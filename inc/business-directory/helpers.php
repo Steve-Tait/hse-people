@@ -1,8 +1,7 @@
 <?php
 /**
- * Shared icon and accreditation-pill-rendering helpers for the
- * Business/Supplier directory, used by both single-business.php and the
- * card partial.
+ * Shared icon helpers for the Business/Supplier directory, used by both
+ * single-business.php and the card partial.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -55,56 +54,8 @@ function hse_business_social_icon( $network ) {
 }
 
 /**
- * Icon + colour per accreditation, keyed by the *parent* term (the
- * issuing body, e.g. BSiF or US PPE) rather than each individual child
- * scheme -- business_accreditation is hierarchical and a business is
- * only ever tagged with a child (see taxonomies.php), so deriving from
- * the parent means one rule per issuing body instead of one per scheme.
- * An unrecognised parent (or a genuinely top-level term, which shouldn't
- * occur on a business but is handled rather than erroring) falls back to
- * a plain tag icon in the default colour.
- */
-function hse_business_accreditation_meta( $term ) {
-	$map = [
-		'bsif'   => [ 'icon' => 'shield-check', 'color' => '#044f8d' ],
-		'us-ppe' => [ 'icon' => 'award', 'color' => '#6a4c93' ],
-	];
-
-	$parent_slug = $term->slug;
-	if ( $term->parent ) {
-		$parent = get_term( $term->parent, 'business_accreditation' );
-		if ( $parent && ! is_wp_error( $parent ) ) {
-			$parent_slug = $parent->slug;
-		}
-	}
-
-	return $map[ $parent_slug ] ?? [ 'icon' => 'tag', 'color' => '#555555' ];
-}
-
-/**
- * Renders a list of business_accreditation term objects as coloured,
- * icon-led pills.
- */
-function hse_business_render_accreditations( $accreditations ) {
-	if ( empty( $accreditations ) ) {
-		return;
-	}
-	foreach ( $accreditations as $accreditation ) {
-		$meta = hse_business_accreditation_meta( $accreditation );
-		printf(
-			'<span class="business-accreditation" style="--accreditation-color:%1$s;">%2$s%3$s</span>',
-			esc_attr( $meta['color'] ),
-			hse_business_icon( $meta['icon'] ),
-			esc_html( $accreditation->name )
-		);
-	}
-}
-
-/**
- * Renders the same pill style as an accreditation, for a business marked
- * Featured (see inc/business-directory/featured.php) -- shown first,
- * ahead of any real accreditation pills, when is_sticky() is true for
- * this post.
+ * Renders a "Featured" pill (see inc/business-directory/featured.php)
+ * when is_sticky() is true for this post.
  */
 function hse_business_render_featured_badge( $post_id ) {
 	if ( ! is_sticky( $post_id ) ) {

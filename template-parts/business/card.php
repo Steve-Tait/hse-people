@@ -9,8 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$accreditations = get_the_terms( get_the_ID(), 'business_accreditation' );
-$accreditations = is_array( $accreditations ) ? $accreditations : [];
 ?>
 
 <div class="business-card">
@@ -25,12 +23,9 @@ $accreditations = is_array( $accreditations ) ? $accreditations : [];
 
 		<h3 class="business-card__title"><?php the_title(); ?></h3>
 
-		<?php if ( is_sticky( get_the_ID() ) || ! empty( $accreditations ) ) : ?>
+		<?php if ( is_sticky( get_the_ID() ) ) : ?>
 			<p class="business-card__accreditations">
-				<?php
-				hse_business_render_featured_badge( get_the_ID() );
-				hse_business_render_accreditations( $accreditations );
-				?>
+				<?php hse_business_render_featured_badge( get_the_ID() ); ?>
 			</p>
 		<?php endif; ?>
 
