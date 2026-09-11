@@ -149,14 +149,14 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 
 	wp_enqueue_style(
 		'hse-business-meta-box',
-		get_template_directory_uri() . '/inc/business-directory/assets/business-meta-box-admin.css',
+		get_stylesheet_directory_uri() . '/inc/business-directory/assets/business-meta-box-admin.css',
 		[],
 		defined( 'ASTRA_THEME_VERSION' ) ? ASTRA_THEME_VERSION : false
 	);
 
 	wp_enqueue_script(
 		'hse-business-meta-box',
-		get_template_directory_uri() . '/inc/business-directory/assets/business-meta-box-admin.js',
+		get_stylesheet_directory_uri() . '/inc/business-directory/assets/business-meta-box-admin.js',
 		[ 'jquery' ],
 		defined( 'ASTRA_THEME_VERSION' ) ? ASTRA_THEME_VERSION : false,
 		true

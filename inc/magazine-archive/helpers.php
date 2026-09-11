@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 function hse_magazine_render_card() {
 	$thumbnail_url = get_the_post_thumbnail_url( get_the_ID(), 'medium_large' );
 	if ( ! $thumbnail_url ) {
-		$thumbnail_url = get_template_directory_uri() . '/inc/magazine-archive/assets/magazine-placeholder.png';
+		$thumbnail_url = get_stylesheet_directory_uri() . '/inc/magazine-archive/assets/magazine-placeholder.png';
 	}
 	?>
 	<div class="magazine-card" data-title="<?php echo esc_attr( strtolower( get_the_title() ) ); ?>">
